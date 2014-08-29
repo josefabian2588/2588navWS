@@ -29,7 +29,489 @@ function EliminarPalabrasComunes($cadena)
 	return preg_replace('/\b('.implode('|',$PalabrasComunes).')\b/','',$cadena);
 }
 
-
+function EliminarPobladosDistritosProvincias($cadena)
+{
+ 
+    $PobladosDistritosProvincias = array(
+ 'Alajuela',
+ 'Cartago',
+ 'Guanacaste',
+ 'Heredia',
+ 'Limon',
+ 'Puntarenas',
+ 'UPALA'
+,'SAN CARLOS'
+,'ALAJUELA'
+,'SAN RAMON'
+,'SAN RAMON'
+,'ATENAS'
+,'UPALA'
+,'GRECIA'
+,'ALFARO RUIZ'
+,'GUATUSO'
+,'SAN CARLOS'
+,'PALMARES'
+,'PALMARES'
+,'LOS CHILES'
+,'POAS'
+,'ALAJUELA'
+,'OROTINA'
+,'NARANJO'
+,'ATENAS'
+,'SAN RAMON'
+,'GUATUSO'
+,'OROTINA'
+,'SAN CARLOS'
+,'UPALA'
+,'ALAJUELA'
+,'SAN MATEO'
+,'UPALA'
+,'LOS CHILES'
+,'ATENAS'
+,'PALMARES'
+,'SAN CARLOS'
+,'SAN CARLOS'
+,'ALAJUELA'
+,'PALMARES'
+,'GRECIA'
+,'ALAJUELA'
+,'ALFARO RUIZ'
+,'OROTINA'
+,'SAN MATEO'
+,'ATENAS'
+,'ALFARO RUIZ'
+,'LOS CHILES'
+,'OROTINA'
+,'ATENAS'
+,'SAN CARLOS'
+,'NARANJO'
+,'OROTINA'
+,'PALMARES'
+,'SAN CARLOS'
+,'ALFARO RUIZ'
+,'SAN RAMON'
+,'SAN RAMON'
+,'SAN RAMON'
+,'SAN CARLOS'
+,'SAN CARLOS'
+,'GRECIA'
+,'SAN CARLOS'
+,'GRECIA'
+,'ALAJUELA'
+,'VALVERDE VEGA'
+,'NARANJO'
+,'POAS'
+,'ALAJUELA'
+,'ALAJUELA'
+,'ALAJUELA'
+,'ATENAS'
+,'GRECIA'
+,'SAN RAMON'
+,'NARANJO'
+,'LOS CHILES'
+,'ALAJUELA'
+,'ATENAS'
+,'GRECIA'
+,'NARANJO'
+,'UPALA'
+,'NARANJO'
+,'POAS'
+,'SAN RAMON'
+,'SAN MATEO'
+,'NARANJO'
+,'POAS'
+,'VALVERDE VEGA'
+,'ALAJUELA'
+,'GUATUSO'
+,'POAS'
+,'SAN RAMON'
+,'SAN RAMON'
+,'GRECIA'
+,'ATENAS'
+,'PALMARES'
+,'SAN RAMON'
+,'ALAJUELA'
+,'VALVERDE VEGA'
+,'VALVERDE VEGA'
+,'GRECIA'
+,'ALAJUELA'
+,'ALFARO RUIZ'
+,'SAN CARLOS'
+,'VALVERDE VEGA'
+,'ALAJUELA'
+,'UPALA'
+,'SAN CARLOS'
+,'SAN CARLOS'
+,'SAN RAMON'
+,'UPALA'
+,'SAN RAMON'
+,'ALFARO RUIZ'
+,'PALMARES'
+,'ALFARO RUIZ'
+,'CARTAGO'
+,'PARAISO'
+,'ALVARADO'
+,'CARTAGO'
+,'ALVARADO'
+,'TURRIALBA'
+,'OREAMUNO'
+,'LA UNION'
+,'CARTAGO'
+,'OREAMUNO'
+,'CARTAGO'
+,'LA UNION'
+,'CARTAGO'
+,'JIMENEZ'
+,'TURRIALBA'
+,'TURRIALBA'
+,'CARTAGO'
+,'PARAISO'
+,'CARTAGO'
+,'CARTAGO'
+,'PARAISO'
+,'ALVARADO'
+,'PARAISO'
+,'EL GUARCO'
+,'TURRIALBA'
+,'JIMENEZ'
+,'TURRIALBA'
+,'OREAMUNO'
+,'CARTAGO'
+,'LA UNION'
+,'LA UNION'
+,'EL GUARCO'
+,'LA UNION'
+,'CARTAGO'
+,'LA UNION'
+,'OREAMUNO'
+,'LA UNION'
+,'TURRIALBA'
+,'OREAMUNO'
+,'TURRIALBA'
+,'TURRIALBA'
+,'PARAISO'
+,'TURRIALBA'
+,'EL GUARCO'
+,'CARTAGO'
+,'EL GUARCO'
+,'TURRIALBA'
+,'LA UNION'
+,'JIMENEZ'
+,'TURRIALBA'
+,'TURRIALBA'
+,'TILARAN'
+,'BAGACES'
+,'CANAS'
+,'NANDAYURE'
+,'NICOYA'
+,'CARRILLO'
+,'SANTA CRUZ'
+,'SANTA CRUZ'
+,'LIBERIA'
+,'CANAS'
+,'NANDAYURE'
+,'SANTA CRUZ'
+,'ABANGARES'
+,'SANTA CRUZ'
+,'LIBERIA'
+,'SANTA CRUZ'
+,'CARRILLO'
+,'BAGACES'
+,'LA CRUZ'
+,'HOJANCHA'
+,'HOJANCHA'
+,'ABANGARES'
+,'LA CRUZ'
+,'TILARAN'
+,'LIBERIA'
+,'NICOYA'
+,'LIBERIA'
+,'BAGACES'
+,'HOJANCHA'
+,'LIBERIA'
+,'NICOYA'
+,'NICOYA'
+,'CANAS'
+,'CARRILLO'
+,'CANAS'
+,'NANDAYURE'
+,'HOJANCHA'
+,'TILARAN'
+,'NICOYA'
+,'BAGACES'
+,'NICOYA'
+,'NICOYA'
+,'ABANGARES'
+,'CANAS'
+,'NANDAYURE'
+,'LA CRUZ'
+,'SANTA CRUZ'
+,'LA CRUZ'
+,'NANDAYURE'
+,'TILARAN'
+,'CARRILLO'
+,'ABANGARES'
+,'SANTA CRUZ'
+,'SANTA CRUZ'
+,'TILARAN'
+,'TILARAN'
+,'TILARAN'
+,'SANTA CRUZ'
+,'NANDAYURE'
+,'SAN RAFAEL'
+,'BELEN'
+,'FLORES'
+,'BARVA'
+,'SAN ISIDRO'
+,'SAN RAFAEL'
+,'SARAPIQUI'
+,'HEREDIA'
+,'SARAPIQUI'
+,'SANTA BARBARA'
+,'SARAPIQUI'
+,'SARAPIQUI'
+,'FLORES'
+,'HEREDIA'
+,'SANTO DOMINGO'
+,'SANTO DOMINGO'
+,'SARAPIQUI'
+,'SANTA BARBARA'
+,'BELEN'
+,'BELEN'
+,'HEREDIA'
+,'SAN ISIDRO'
+,'SAN ISIDRO'
+,'FLORES'
+,'BARVA'
+,'SAN ISIDRO'
+,'SAN RAFAEL'
+,'SANTA BARBARA'
+,'SANTO DOMINGO'
+,'BARVA'
+,'SAN PABLO'
+,'BARVA'
+,'SANTA BARBARA'
+,'SAN RAFAEL'
+,'BARVA'
+,'SANTO DOMINGO'
+,'SANTA BARBARA'
+,'BARVA'
+,'SANTO DOMINGO'
+,'SAN RAFAEL'
+,'SANTA BARBARA'
+,'SANTO DOMINGO'
+,'SANTO DOMINGO'
+,'SANTO DOMINGO'
+,'HEREDIA'
+,'HEREDIA'
+,'SIQUIRRES'
+,'MATINA'
+,'TALAMANCA'
+,'TALAMANCA'
+,'SIQUIRRES'
+,'POCOCI'
+,'MATINA'
+,'POCOCI'
+,'GUACIMO'
+,'SIQUIRRES'
+,'SIQUIRRES'
+,'GUACIMO'
+,'POCOCI'
+,'POCOCI'
+,'LIMON'
+,'LIMON'
+,'MATINA'
+,'GUACIMO'
+,'SIQUIRRES'
+,'GUACIMO'
+,'LIMON'
+,'GUACIMO'
+,'POCOCI'
+,'POCOCI'
+,'SIQUIRRES'
+,'TALAMANCA'
+,'TALAMANCA'
+,'LIMON'
+,'PUNTARENAS'
+,'COTO BRUS'
+,'PUNTARENAS'
+,'OSA'
+,'PUNTARENAS'
+,'BUENOS AIRES'
+,'BUENOS AIRES'
+,'BUENOS AIRES'
+,'BUENOS AIRES'
+,'CORREDORES'
+,'PUNTARENAS'
+,'BUENOS AIRES'
+,'PUNTARENAS'
+,'PUNTARENAS'
+,'PUNTARENAS'
+,'BUENOS AIRES'
+,'CORREDORES'
+,'PUNTARENAS'
+,'ESPARZA'
+,'GOLFITO'
+,'PUNTARENAS'
+,'GOLFITO'
+,'PUNTARENAS'
+,'GARABITO'
+,'CORREDORES'
+,'CORREDORES'
+,'PUNTARENAS'
+,'COTO BRUS'
+,'ESPARZA'
+,'PUNTARENAS'
+,'MONTES DE ORO'
+,'PUNTARENAS'
+,'AGUIRRE'
+,'OSA'
+,'PUNTARENAS'
+,'PARRITA'
+,'GOLFITO'
+,'OSA'
+,'BUENOS AIRES'
+,'PUNTARENAS'
+,'COTO BRUS'
+,'BUENOS AIRES'
+,'OSA'
+,'GOLFITO'
+,'PUNTARENAS'
+,'AGUIRRE'
+,'COTO BRUS'
+,'MONTES DE ORO'
+,'ESPARZA'
+,'ESPARZA'
+,'ESPARZA'
+,'COTO BRUS'
+,'AGUIRRE'
+,'OSA'
+,'GARABITO'
+,'MONTES DE ORO'
+,'BUENOS AIRES'
+,'ALAJUELITA'
+,'TIBAS'
+,'ASERRI'
+,'PURISCAL'
+,'PEREZ ZELEDON'
+,'SANTA ANA'
+,'PEREZ ZELEDON'
+,'GOICOECHEA'
+,'PURISCAL'
+,'ACOSTA'
+,'TURRUBARES'
+,'SAN JOSE'
+,'VAZQUEZ DE CORONADO'
+,'SAN JOSE'
+,'PURISCAL'
+,'TIBAS'
+,'TIBAS'
+,'MORA'
+,'ALAJUELITA'
+,'DOTA'
+,'CURRIDABAT'
+,'DESAMPARADOS'
+,'PEREZ ZELEDON'
+,'PURISCAL'
+,'DESAMPARADOS'
+,'VAZQUEZ DE CORONADO'
+,'ESCAZU'
+,'DESAMPARADOS'
+,'PEREZ ZELEDON'
+,'CURRIDABAT'
+,'DESAMPARADOS'
+,'PURISCAL'
+,'GOICOECHEA'
+,'ACOSTA'
+,'MORA'
+,'SAN JOSE'
+,'SAN JOSE'
+,'GOICOECHEA'
+,'DOTA'
+,'ASERRI'
+,'TIBAS'
+,'LEON CORTES'
+,'DESAMPARADOS'
+,'GOICOECHEA'
+,'SAN JOSE'
+,'SAN JOSE'
+,'PURISCAL'
+,'MONTES DE OCA'
+,'ASERRI'
+,'ACOSTA'
+,'PEREZ ZELEDON'
+,'VAZQUEZ DE CORONADO'
+,'DESAMPARADOS'
+,'SAN JOSE'
+,'PEREZ ZELEDON'
+,'MORA'
+,'SANTA ANA'
+,'MORA'
+,'PEREZ ZELEDON'
+,'SANTA ANA'
+,'GOICOECHEA'
+,'GOICOECHEA'
+,'PEREZ ZELEDON'
+,'PEREZ ZELEDON'
+,'DESAMPARADOS'
+,'MONTES DE OCA'
+,'ACOSTA'
+,'SANTA ANA'
+,'ASERRI'
+,'LEON CORTES'
+,'ALAJUELITA'
+,'DESAMPARADOS'
+,'ESCAZU'
+,'LEON CORTES'
+,'PURISCAL'
+,'TARRAZU'
+,'DESAMPARADOS'
+,'ALAJUELITA'
+,'SAN JOSE'
+,'GOICOECHEA'
+,'ASERRI'
+,'ACOSTA'
+,'PEREZ ZELEDON'
+,'LEON CORTES'
+,'VAZQUEZ DE CORONADO'
+,'MORAVIA'
+,'ALAJUELITA'
+,'DESAMPARADOS'
+,'TURRUBARES'
+,'TIBAS'
+,'TARRAZU'
+,'TURRUBARES'
+,'TARRAZU'
+,'DESAMPARADOS'
+,'LEON CORTES'
+,'TURRUBARES'
+,'MONTES DE OCA'
+,'PEREZ ZELEDON'
+,'TURRUBARES'
+,'DESAMPARADOS'
+,'DESAMPARADOS'
+,'ESCAZU'
+,'MONTES DE OCA'
+,'PURISCAL'
+,'VAZQUEZ DE CORONADO'
+,'SAN JOSE'
+,'MORAVIA'
+,'CURRIDABAT'
+,'SANTA ANA'
+,'LEON CORTES'
+,'DOTA'
+,'PURISCAL'
+,'MORA'
+,'ASERRI'
+,'CURRIDABAT'
+,'MORAVIA'
+,'SAN JOSE'
+,'SANTA ANA'
+,'ASERRI'
+,'SAN JOSE'
+);
+    return preg_replace('/\b('.implode('|',$PobladosDistritosProvincias).')\b/','',$cadena);
+}
 
 function ObtenerTerminosDirectorio()
 {
@@ -1898,7 +2380,10 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                         
                         $Sugerencias = array();
                          $palabras    = explode(" ", $search_term);
+                         $contador =1;
                        foreach ($palabras as $palabra) {
+                        
+                            
                             $resul = CorrectorOrtografico($palabra);
                             array_push($Sugerencias, $resul);
                         }
@@ -1921,11 +2406,17 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                         
 
                         /* rEVISAR SINTAXIS */
-                     $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-                                        FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "') 
+                        
+
+                     $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                                        FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' ) 
                                          limit 0,10"; 
 
-                        
+ 
+
+
+
+
                         $res = mysql_query($sql);
                         
                         
@@ -1936,7 +2427,7 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                         
                         $num = mysql_num_rows($res);
                         
-                        if ($num > 0) {
+                        if ($num > 3) {
                             //
                             while ($row = mysql_fetch_object($res)) {
                                 
@@ -2033,22 +2524,18 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
     
                         
                             
-                             $search_term = stemm_es::stemm($search_term); //recorta el nombre usando un lexemador para obtener la raiz de las palabras
+                           //  $search_term = stemm_es::stemm($search_term); //recorta el nombre usando un lexemador para obtener la raiz de las palabras
 
 
-                                         $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                         $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE) 
+                                             
+                                             limit 0,6"; 
 
-                                              ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
-                                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
 
-                                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
-                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' IN BOOLEAN MODE) 
-                                             HAVING distance < '" . $radius . "' 
-                                             ORDER BY distance limit 0,20";
 
-                            
                             $res = mysql_query($sql);
                             
                             
@@ -2058,6 +2545,36 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                             $data = array();
                             
                             $num = mysql_num_rows($res);
+
+
+                                /*  Busqueda empotrada WITH QUERY EXPANSION*/
+
+                            if ($num = 0) {
+
+                            $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION) 
+                                             
+                                             limit 0,4"; 
+
+                            
+                            $res = mysql_query($sql);
+                            $num = mysql_num_rows($res);
+
+                            }
+
+
+                              if ($num = 0) {
+
+                             $sql = "SELECT *, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                    FROM navigar_fetch_xmldata where  label like '%" . $search_term . "%' limit 0,60";
+
+                            
+                            $res = mysql_query($sql);
+                            $num = mysql_num_rows($res);
+
+                            }
+
+
                             
                             if ($num > 0) {
                                 //
