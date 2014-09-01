@@ -1602,10 +1602,12 @@ ORDER BY distance";
                 
                 
 
+
+ 
+                            //
+                //  Busquedas por terminos , Directorio 
                 //
-                //	Busquedas por terminos , Directorio 
-                //
-				
+                
                 
                 $TerminoEncontrado = 0;
                 $coincidencia      = 0;
@@ -1647,30 +1649,18 @@ ORDER BY distance";
                     
                     // $num  = mysql_num_rows($res);
                     
-                    // obtener el subhexcode				
+                    // obtener el subhexcode                
                     while ($fila = mysql_fetch_assoc($res)) {
                         
                         $var             = $fila['Subhexcode'];
                         $arraySubHexcode = explode(";", $var);
                         
-						
-						  $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-							( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
-							* cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-							* sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 							
-							FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' IN BOOLEAN MODE)  ";
-						
-					
-						
-
-						$sql = $sql . " UNION";	
-						
-                        $sql =$sql . " SELECT *
-									,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-									( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
-									* cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-									* sin( radians(navigar_fetch_xmldata.latitude)))) AS distance				
-									FROM navigar_fetch_xmldata  where description = ";
+                        $sql = "SELECT *
+                                    ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
+                                    FROM navigar_fetch_xmldata  where description = ";
 
                         foreach ($arraySubHexcode as $values) {
                             
@@ -1684,14 +1674,11 @@ ORDER BY distance";
                             }
                             
                             
-							
-							
                         }
-                       
-						
+                        
                     }
                     
-                    $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,60";
+                    $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,120";
                     
                     $res = mysql_query($sql);
                     
@@ -1700,8 +1687,6 @@ ORDER BY distance";
                     
                     if ($num > 0) {
                         
-
-
                         while ($row = mysql_fetch_object($res)) {
                             
                             $data[$x]['id'] = $row->id;
@@ -1770,8 +1755,8 @@ ORDER BY distance";
                         
                     } //if($num>0)
                     else
-					{
-						$return = array(
+                    {
+                        $return = array(
                                     
                                     'error' => 0,
                                     
@@ -1780,36 +1765,49 @@ ORDER BY distance";
                                     
                                     
                                 );
-					
-					}
+                    
+                    }
                     
                     
                 } //termina busquedas por terminos 
                 
+                
                 else {
                     
-                 
-                    
+              
+                    /*
                     //PRIMERA opcion de busqueda normal
                     $sql = "SELECT 
 
-					*, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                    *, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
-					( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
-					* cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
 
-					* sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
+                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
-					FROM navigar_fetch_xmldata where  typeHex!=''   " . $WC . "  AND  `label` like '%" . $search_term . "%' 
+                    FROM navigar_fetch_xmldata where  typeHex!=''   " . $WC . "  AND  `label` like '%" . $search_term . "%' 
 
-					HAVING distance < '" . $radius . "' 
+                    HAVING distance < '" . $radius . "' 
 
-					ORDER BY distance limit 0,60";
+                    ORDER BY distance limit 0,60";
                     
-					
-					
-                    
+                    */
+           
+                 //   
+                //PRIMERA opcion de busqueda 
+                //        
+
+
+
+                     $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                                        FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "') 
+                                         limit 0,30"; 
+
+
+
+
                     
                     $res = mysql_query($sql);
                     
@@ -1823,7 +1821,7 @@ ORDER BY distance";
                     
                     
                     
-                    if ($num > 0) {
+                    if ($num > 1) {
                         
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -1916,27 +1914,21 @@ ORDER BY distance";
                         //
                         //SEGUNDA opcion de busqueda
                         
-                       
-
+                        
                         $Sugerencias = array();
-                        $palabras    = explode(" ", $search_term);
+                         $palabras    = explode(" ", $search_term);
+                         $contador =1;
+                       foreach ($palabras as $palabra) {
                         
-                                     
-                                      
-
-                        foreach ($palabras as $palabra) {
-                            $resul = CorrectorOrtografico($palabra); 
-                                
-                             array_push($Sugerencias, $resul);
+                            
+                            $resul = CorrectorOrtografico($palabra);
+                            array_push($Sugerencias, $resul);
                         }
-
                         
-            
-                        $search_term = implode(" ", $Sugerencias);
-
+                         $search_term = implode(" ", $Sugerencias);
                         
-                        
-                        $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                        /*
+                      $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
                                          ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
@@ -1944,14 +1936,25 @@ ORDER BY distance";
 
                                          * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
-                                         FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "')  
+                                         FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "') 
+                                         limit 0,30"; 
 
-                                         HAVING distance < '" . $radius . "' 
-                                         ORDER BY distance limit 0,40";
-
-
-                                              
+                                */         
                         
+
+                
+                  
+
+
+                     $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                                        FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE) 
+                                         limit 0,40"; 
+
+ 
+                    
+
+
+
                         $res = mysql_query($sql);
                         
                         
@@ -1962,7 +1965,7 @@ ORDER BY distance";
                         
                         $num = mysql_num_rows($res);
                         
-                        if ($num > 0) {
+                        if ($num > 3) {
                             //
                             while ($row = mysql_fetch_object($res)) {
                                 
@@ -2047,6 +2050,126 @@ ORDER BY distance";
                             );
                             
                         }
+
+
+                         else {
+                        
+                        //
+                        // ****************
+                        //*****************
+                        //
+                        
+                        
+                       
+                    
+                   /*  Busqueda empotrada WITH QUERY EXPANSION*/
+                                        $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION) 
+                                             
+                                             limit 0,40"; 
+
+
+ 
+                    
+
+
+
+                        $res = mysql_query($sql);
+                        
+                        
+                        
+                        $x = 0;
+                        
+                        $data = array();
+                        
+                        $num = mysql_num_rows($res);
+                        
+                        if ($num > 3) {
+                            //
+                            while ($row = mysql_fetch_object($res)) {
+                                
+                                
+                                
+                                $data[$x]['id'] = $row->id;
+                                
+                                
+                                
+                                $_SQL = "SELECT * FROM navigar_reviews WHERE poi_id='" . $row->id . "' AND  imei='" . $imei . "' ";
+                                
+                                $_alreadyRev = mysql_query($_SQL);
+                                
+                                
+                                
+                                
+                                $sqlrateC = "select count(t3.id) as rating  from navigar_reviews as t3 where t3.poi_id=" . $row->id;
+                                
+                                $res_rateC = mysql_query($sqlrateC);
+                                
+                                $row_rateC = mysql_fetch_object($res_rateC);
+                                
+                                $data[$x]['review_count'] = $row_rateC->rating;
+                                
+                                
+                                
+                                
+                                
+                                //print_r($row_rate);
+                                
+                                if (mysql_num_rows($_alreadyRev) > 0)
+                                    $data[$x]['already_reviewd'] = "true";
+                                
+                                else
+                                    $data[$x]['already_reviewd'] = "false";
+                                
+                                
+                                
+                                $data[$x]['label'] = $row->label;
+                                
+                                $data[$x]['street']   = $row->street;
+                                $data[$x]['location'] = $row->location;
+                                
+                                $data[$x]['city'] = $row->city;
+                                
+                                $data[$x]['region'] = $row->region;
+                                
+                                $data[$x]['country'] = $row->country;
+                                
+                                $data[$x]['pincode'] = $row->pincode;
+                                
+                                $data[$x]['type'] = $row->type;
+                                
+                                $data[$x]['typeHex'] = $row->typeHex;
+                                
+                                $data[$x]['latitude'] = $row->latitude;
+                                
+                                $data[$x]['longitude'] = $row->longitude;
+                                
+                                $data[$x]['phone'] = $row->phone;
+                                
+                                $data[$x]['rating'] = $row->rating;
+                                
+                                
+                                
+                                $data[$x]['distance'] = $row->distance;
+                                
+                                
+                                
+                                $x++;
+                                
+                            }
+                            
+                            $return = array(
+                                
+                                'error' => 0,
+                                
+                                'posts' => $data
+                                
+                                
+                                
+                            );
+                            
+                        }    
+
                         
                         else {
                             
@@ -2059,24 +2182,27 @@ ORDER BY distance";
     
                         
                             
-                             $search_term = stemm_es::stemm($search_term); //recorta el nombre usando un lexemador para obtener la raiz de las palabras
+                           //  $search_term = stemm_es::stemm($search_term); //recorta el nombre usando un lexemador para obtener la raiz de las palabras
+
+                                $sql = "SELECT 
+
+                    *, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+
+                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+
+                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+
+                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
+
+                    FROM navigar_fetch_xmldata where  typeHex!=''   " . $WC . "  AND  `label` like '%" . $search_term . "%' 
+
+                    HAVING distance < '" . $radius . "' 
+
+                    ORDER BY distance limit 0,50";
 
 
-                                         $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
-                                              ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
-                                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-
-                                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
-
-                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' IN BOOLEAN MODE) 
-                                             HAVING distance < '" . $radius . "' 
-                                             ORDER BY distance limit 0,20";
-
-                            
-                            
-                            
                             $res = mysql_query($sql);
                             
                             
@@ -2086,6 +2212,11 @@ ORDER BY distance";
                             $data = array();
                             
                             $num = mysql_num_rows($res);
+
+
+                                
+
+
                             
                             if ($num > 0) {
                                 //
@@ -2187,11 +2318,15 @@ ORDER BY distance";
                             
                             
                             
-                        } //tercer segundo metodo de busqueda normal
+                        } //tercer  metodo de busqueda normal
                         
                     } //fin segundo metodo de busqueda normal
+                    } // f************************
                     
                 } // fin primer metodo de busqueda normal
+                
+                
+             
                 
                 
             } else {
