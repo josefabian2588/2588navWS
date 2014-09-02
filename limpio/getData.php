@@ -100,8 +100,6 @@ if (!defined('ROOT_PATH')) {
 
     define('ROOT_PATH', realpath(dirname(dirname(__FILE__))));
 
-
-
 }
 
 if (!defined('DS')) {
@@ -1369,10 +1367,10 @@ ORDER BY distance";
 		 $search_term = EliminarPalabrasComunes($search_term);
 		 
 		// 09-4-14 insertar en nueva tabla las busquedas	 
-	/*
+	
 		    $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
             mysql_query($sql_insertrecord);
-*/
+
 		 //
 		 
 		 
@@ -1766,11 +1764,10 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                     
                 } //termina busquedas por terminos 
                 
-                
                 else {
                     
-              
-                    /*
+                 
+                    
                     //PRIMERA opcion de busqueda normal
                     $sql = "SELECT 
 
@@ -1788,22 +1785,9 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
 
 					ORDER BY distance limit 0,60";
                     
-                    */
+                    
            
-                 //   
-                //PRIMERA opcion de busqueda 
-                //        
-
-
-
-                     $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
-                                        FROM navigar_fetch_xmldata 
-                                         where  Match(label) AGAINST ('" . $search_term . "' ) or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' )
-                                         limit 0,30"; 
-
-
-
-
+                    
                     
                     $res = mysql_query($sql);
                     
@@ -1817,7 +1801,7 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                     
                     
                     
-                    if ($num > 1) {
+                    if ($num > 0) {
                         
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -1912,22 +1896,17 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                         
                         
                         $Sugerencias = array();
-                         $palabras    = explode(" ", $search_term);
-                         $contador =1;
-                       foreach ($palabras as $palabra) {
-                        
-                            
+                        $palabras    = explode(" ", $search_term);
+                        foreach ($palabras as $palabra) {
                             $resul = CorrectorOrtografico($palabra);
                             array_push($Sugerencias, $resul);
                         }
                         
-                         $search_term = implode(" ", $Sugerencias);
-
-
-                     $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
-                                        FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE) 
-                                         limit 0,40"; 
-
+                        $search_term = implode(" ", $Sugerencias);
+                        
+                        $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "') LIMIT 50 ";
+                        
+                        
                         $res = mysql_query($sql);
                         
                         
@@ -1938,7 +1917,7 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                         
                         $num = mysql_num_rows($res);
                         
-                        if ($num > 3) {
+                        if ($num > 0) {
                             //
                             while ($row = mysql_fetch_object($res)) {
                                 
@@ -2023,122 +2002,6 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                             );
                             
                         }
-
-
-                         else {
-                        
-                        //
-                        // ****************
-                        //*****************
-                        //
-                        
-                        
-                       
-                    
-                   /*  Busqueda empotrada WITH QUERY EXPANSION*/
-                                        $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
-                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION) 
-                                             
-                                             limit 0,40"; 
-
-
- 
-                        $res = mysql_query($sql);
-                        
-                        
-                        
-                        $x = 0;
-                        
-                        $data = array();
-                        
-                        $num = mysql_num_rows($res);
-                        
-                        if ($num > 3) {
-                            //
-                            while ($row = mysql_fetch_object($res)) {
-                                
-                                
-                                
-                                $data[$x]['id'] = $row->id;
-                                
-                                
-                                
-                                $_SQL = "SELECT * FROM navigar_reviews WHERE poi_id='" . $row->id . "' AND  imei='" . $imei . "' ";
-                                
-                                $_alreadyRev = mysql_query($_SQL);
-                                
-                                
-                                
-                                
-                                $sqlrateC = "select count(t3.id) as rating  from navigar_reviews as t3 where t3.poi_id=" . $row->id;
-                                
-                                $res_rateC = mysql_query($sqlrateC);
-                                
-                                $row_rateC = mysql_fetch_object($res_rateC);
-                                
-                                $data[$x]['review_count'] = $row_rateC->rating;
-                                
-                                
-                                
-                                
-                                
-                                //print_r($row_rate);
-                                
-                                if (mysql_num_rows($_alreadyRev) > 0)
-                                    $data[$x]['already_reviewd'] = "true";
-                                
-                                else
-                                    $data[$x]['already_reviewd'] = "false";
-                                
-                                
-                                
-                                $data[$x]['label'] = $row->label;
-                                
-                                $data[$x]['street']   = $row->street;
-                                $data[$x]['location'] = $row->location;
-                                
-                                $data[$x]['city'] = $row->city;
-                                
-                                $data[$x]['region'] = $row->region;
-                                
-                                $data[$x]['country'] = $row->country;
-                                
-                                $data[$x]['pincode'] = $row->pincode;
-                                
-                                $data[$x]['type'] = $row->type;
-                                
-                                $data[$x]['typeHex'] = $row->typeHex;
-                                
-                                $data[$x]['latitude'] = $row->latitude;
-                                
-                                $data[$x]['longitude'] = $row->longitude;
-                                
-                                $data[$x]['phone'] = $row->phone;
-                                
-                                $data[$x]['rating'] = $row->rating;
-                                
-                                
-                                
-                                $data[$x]['distance'] = $row->distance;
-                                
-                                
-                                
-                                $x++;
-                                
-                            }
-                            
-                            $return = array(
-                                
-                                'error' => 0,
-                                
-                                'posts' => $data
-                                
-                                
-                                
-                            );
-                            
-                        }    
-
                         
                         else {
                             
@@ -2148,30 +2011,12 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                             //
                             //TERCER opcion de busqueda
                             
-    
-                        
                             
-                           //  $search_term = stemm_es::stemm($search_term); //recorta el nombre usando un lexemador para obtener la raiz de las palabras
-
-                                $sql = "SELECT 
-
-                    *, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-
-                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
-
-                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-
-                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
-
-                    FROM navigar_fetch_xmldata where  typeHex!=''   " . $WC . "  AND  `label` like '%" . $search_term . "%' 
-
-                    HAVING distance < '" . $radius . "' 
-
-                    ORDER BY distance limit 0,50";
-
-
-
-
+                            $search_term = stemm_es::stemm($search_term); //recorta el nombre usando un lexemador para obtener la raiz de las palabras
+                            
+                            $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $search_term . "' IN BOOLEAN MODE) LIMIT 15 ";
+                            
+                            
                             $res = mysql_query($sql);
                             
                             
@@ -2181,11 +2026,6 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                             $data = array();
                             
                             $num = mysql_num_rows($res);
-
-
-                                
-
-
                             
                             if ($num > 0) {
                                 //
@@ -2287,10 +2127,9 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                             
                             
                             
-                        } //tercer  metodo de busqueda normal
+                        } //tercer segundo metodo de busqueda normal
                         
                     } //fin segundo metodo de busqueda normal
-                    } // f************************
                     
                 } // fin primer metodo de busqueda normal
                 
