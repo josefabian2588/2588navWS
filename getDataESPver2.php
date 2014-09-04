@@ -25,7 +25,7 @@ bsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
 function EliminarPalabrasComunes($cadena)
 {
  
-	$PalabrasComunes = array('a','el','los','les','de','del','y','o','u','uno','una','varias','todos','todas','un','unos','como','algun','varios','tambien','solo','solamente','sin','que','aqui','alguno','algunas','es','lo','al','en','con','las','le');
+	$PalabrasComunes = array('bar','restaurante','a','el','los','les','de','del','y','o','u','uno','una','varias','todos','todas','un','unos','como','algun','varios','tambien','solo','solamente','sin','que','aqui','alguno','algunas','es','lo','al','en','con','las','le');
 	return preg_replace('/\b('.implode('|',$PalabrasComunes).')\b/','',$cadena);
 }
 
@@ -1372,8 +1372,8 @@ ORDER BY distance";
            
             //*** 09-4-14 insertar el registro de la busqueda 
             
-            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
-            mysql_query($sql_insertrecord);
+         //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
+         //   mysql_query($sql_insertrecord);
            
 		//	}
             
@@ -1786,7 +1786,26 @@ ORDER BY distance";
                             
                     else {
                     
+
+      
+
                     
+                   /* TERMINOS DE PRUEBA , EN ALGUN MOMENTO DIERON PROBLEMAS DE Busquedas
+
+                    coopecoronado
+                    bar malibu
+                    cima
+                   
+
+
+
+
+
+
+
+                   */         
+
+
                     
                     
                     // ******************************************  
@@ -1794,29 +1813,40 @@ ORDER BY distance";
                     // Match(label) AGAINST ('" . $search_term . "')    
                     //  *******************************************     
                     
+/*
 
-                        /*
-                         
-                    $sql = "SELECT * ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
-                                        FROM navigar_fetch_xmldata  
-                                        where  Match(label) AGAINST ('" . $search_term . "' ) or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' )
-                                         limit 0,30";
-                    
-                   */
-                    
-                    $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-
-                                         ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
-
-                                         * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-
-                                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
-
+                     $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
                                          FROM navigar_fetch_xmldata 
-                                         WHERE  Match(label) AGAINST ('" . $search_term . "') or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' ) 
-                                         HAVING distance < '" . $radius . "' 
-                                         ORDER BY distance limit 0,30";                     
+                                          WHERE  Match(label) AGAINST ('" . $search_term . "') or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' ) ORDER BY Score DESC limit 0,30";      
 
+             */
+                 
+/*
+                        $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
+                             FROM navigar_fetch_xmldata 
+                             WHERE  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE)  ORDER BY Score DESC  limit 0,30";                            
+
+
+*/
+
+/*
+                              $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
+                             FROM navigar_fetch_xmldata 
+                             where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)   ORDER BY Score DESC  limit 0,30";      
+
+*/
+
+ $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
+                                         FROM navigar_fetch_xmldata 
+                                          WHERE  Match(label) AGAINST ('" . $search_term . "') or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' ) ORDER BY Score DESC limit 0,30";      
+
+
+
+             
 
                     $res = mysql_query($sql);
                     
@@ -1830,7 +1860,7 @@ ORDER BY distance";
                     
                     
                     
-                    if ($num > 1) {
+                    if ($num > 2) {
                         
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -1914,22 +1944,33 @@ ORDER BY distance";
                             
                         );
                         
-                    }
+                    } else {
+                    
+                    
+                    
+                    $return = array(
+                        
+                        'error' => 1,
+                        
+                        'msg' => 'no result'
+                        
+                    );
+
+
+
+}
 
 
 
 
 
 
-} // FIN PRIMER metodo de busqueda 
 
 
 
+            } // FIN PRIMER metodo de busqueda 
 
 
-
-                
-                
             } else {
                 throw new Exception("fields can not be null");
             }
