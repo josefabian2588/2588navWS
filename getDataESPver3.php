@@ -1834,14 +1834,29 @@ ORDER BY distance";
                     
                               /*  mas de una palabra  */
                     else
+
                         {
                         
 
+                         $palabrafinal=$trozos[$numero-1];
+                        
+                         $sql = "SELECT *,Match(label,city) AGAINST ('" . $search_term . "') as Score,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
+                            FROM navigar_fetch_xmldata 
+                            WHERE  Match(label) AGAINST ('" . $search_term . "')  and Match(city) AGAINST ('" . $palabrafinal . "') or alias1=('" . $palabrafinal . "' )
+                            ORDER BY Score DESC limit 0,30"; 
+
+
+
+ 
+
+
+          /*
                     $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
-                                         FROM navigar_fetch_xmldata 
-                                          WHERE  Match(label) AGAINST ('" . $search_term . "') or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' ) ORDER BY Score DESC limit 0,30";  
-
+                            FROM navigar_fetch_xmldata 
+                            WHERE  Match(label) AGAINST ('" . $search_term . "') or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' ) ORDER BY Score DESC limit 0,30";  
+*/
 
 
 
@@ -1967,14 +1982,14 @@ ORDER BY distance";
                     
 
 
-
+/*
 
                          $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
                              FROM navigar_fetch_xmldata 
                              WHERE  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE)  ORDER BY Score DESC  limit 0,20";
 
-
+*/
 
                     $res = mysql_query($sql);
 
@@ -2080,7 +2095,7 @@ ORDER BY distance";
                             //   where  `label` like '%" . $search_term . "%' 
                             //  *******************************************  
 
-
+/*
 
                $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
@@ -2091,11 +2106,11 @@ ORDER BY distance";
                                          * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
                                          FROM navigar_fetch_xmldata 
-                                         WHERE  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE) 
+                                          where   `label` like '%" . $search_term . "%' 
 
                                          HAVING distance < '" . $radius . "' 
                                          ORDER BY distance limit 0,30";
-
+*/
 
 
                $res = mysql_query($sql);
