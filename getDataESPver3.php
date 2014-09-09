@@ -1797,16 +1797,45 @@ ORDER BY distance";
 
                    */         
 
-
-                    
-                    
                     // ******************************************  
                     // PRIMERA opcion de busqueda 
                     // Match(label) AGAINST ('" . $search_term . "')    
                     //  *******************************************     
 
 
+                   /*  contar palabras  */     
 
+
+                    $trozos=explode(" ",$search_term);
+                    $numero=count($trozos);
+
+
+                    /* solo es una palabra */
+                    if ($numero==1) {
+
+
+
+                     $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+
+                       ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+
+                       * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+
+                        * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
+
+                        FROM navigar_fetch_xmldata 
+                        WHERE  Match(label) AGAINST ('" . $search_term . "') or alias1=('" . $search_term . "' ) or alias2=('" . $search_term . "' ) or alias3=('" . $search_term . "' ) 
+                        HAVING distance < '" . $radius . "' 
+                        ORDER BY distance limit 0,30";                     
+
+
+
+                    }
+                    
+                              /*  mas de una palabra  */
+                    else
+                        {
+                        
 
                     $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
@@ -1815,15 +1844,8 @@ ORDER BY distance";
 
 
 
-/*
-                              $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
-                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
-                             FROM navigar_fetch_xmldata 
-                             where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)   ORDER BY Score DESC  limit 0,30";      
 
-*/
-
-       
+                    }
 
                     $res = mysql_query($sql);
                     
