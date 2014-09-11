@@ -68,6 +68,22 @@ function ObtenerTerminosDirectorio()
     return $ArregloTermino;
 }
 
+function comprobarUltimaPalabra($palabrafinal)
+{
+    $result=false;
+    $sqlpalabrafinal = "SELECT distinct city FROM  navigar_fetch_xmldata where city like '%" . $palabrafinal . "%'";
+    $resFilaCity = mysql_query($sqlpalabrafinal);
+
+    if (mysql_num_rows($resFilaCity) > 0) // verifica que existe algun city que concuerde 
+    {
+
+        $result=true;
+
+    }
+
+    return $result;
+}
+
 
 
 function createRouteGeometry($mainArray)
@@ -1597,16 +1613,23 @@ ORDER BY distance";
                 }
                 
                 
-
-                //
-                //  Busquedas por terminos , Directorio 
-                //
+                    // ******************************************  
+                    // Busquedas por terminos , Directorio     
+                    //  *******************************************  
+                
                 
                 
                 $TerminoEncontrado = 0;
                 $coincidencia      = 0;
                 trim($search_term);
+
+
+                $trozos=explode(" ",$search_term);
+                $numero=count($trozos);
+                $palabraInicial=$trozos[0];
+
                 
+                /*  PROCESO PARA OBTENER LOS TERMINOS DE LA DB */
                 
                 $ArregloTermino = ObtenerTerminosDirectorio();
                 
@@ -1620,7 +1643,7 @@ ORDER BY distance";
                             break;
                         }
                         
-                        if ($value == $search_term) //encuentra una similitud
+                        if ($value == $palabraInicial) //encuentra una similitud
                             $coincidencia = 1;
                     }
                     
@@ -1633,16 +1656,91 @@ ORDER BY distance";
                     
                 }
                 
-                
+                 /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO */
               
                 if ($TerminoEncontrado == 1) {
                     
                     $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                     $res = mysql_query($sql);
                     
-                    
+                    /* OBTIENE LA PALABRA FINAL*/
+                     $palabrafinal=$trozos[$numero-1];
+                     $resultPalabrafinal=comprobarUltimaPalabra($palabrafinal);
                     // $num  = mysql_num_rows($res);
+
+
+                         if($resultPalabrafinal==true)
+                         {
+
+/*
+
+
+                         $search_term= str_replace($palabrafinal , "" , $search_term);
+
+                         $sql = "SELECT label,street,latitude,longitude,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                               ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+
+                       * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+
+                        * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
+
+                            FROM navigar_fetch_xmldata 
+                            WHERE  Match(label) AGAINST ('" . $search_term . "')  and   Match(city) AGAINST ('" . $palabrafinal . "') 
+                           HAVING distance < '" . $radius . "' 
+                        ORDER BY distance limit 0,30"; 
+*/
+
+
+                             // obtener el subhexcode                
+                    while ($fila = mysql_fetch_assoc($res)) {
+                        
+                        $var             = $fila['Subhexcode'];
+                        $arraySubHexcode = explode(";", $var);
+                        
+                        
+                          $sql = "SELECT label,street,latitude,longitude,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
+                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
+                            FROM navigar_fetch_xmldata 
+                             where  Match(label) AGAINST ('" . $palabraInicial . "' )  and  Match(city) AGAINST ('" . $palabrafinal . "') ";
+                        
                     
+                        
+
+                        $sql = $sql . " UNION"; 
+                        
+                        $sql =$sql . " SELECT label,street,latitude,longitude,
+                                    (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
+                                    FROM navigar_fetch_xmldata  
+                                    where Match(city) AGAINST ('" . $palabrafinal . "')  AND ( description = ";
+
+                        foreach ($arraySubHexcode as $values) {
+                            
+                            if ($arraySubHexcode[0] == $values) {
+                                
+                                $sql = $sql . "'" . $values . "'";
+                                
+                            } else {
+                                $sql = $sql . " or description = '" . $values . "' ";
+                               
+                            }
+                                      
+                        }
+                       
+                        $sql =$sql . " ) ";
+                    }
+                         }
+                    
+
+//else
+
+                       else  {
+
                     // obtener el subhexcode                
                     while ($fila = mysql_fetch_assoc($res)) {
                         
@@ -1650,7 +1748,7 @@ ORDER BY distance";
                         $arraySubHexcode = explode(";", $var);
                         
                         
-                          $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                          $sql = "SELECT label,street,latitude,longitude,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
@@ -1661,7 +1759,7 @@ ORDER BY distance";
 
                         $sql = $sql . " UNION"; 
                         
-                        $sql =$sql . " SELECT *
+                        $sql =$sql . " SELECT label,street,latitude,longitude
                                     ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                     ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
@@ -1686,6 +1784,9 @@ ORDER BY distance";
                        
                         
                     }
+
+                    }
+                   
                     
                     $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,60";
                     
@@ -1815,7 +1916,7 @@ ORDER BY distance";
 
 
 
-                     $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                     $sql = "SELECT label,street,latitude,longitude,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
                        ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
@@ -1830,6 +1931,8 @@ ORDER BY distance";
 
 
 
+
+
                     }
                     
                               /*  mas de una palabra  */
@@ -1839,12 +1942,30 @@ ORDER BY distance";
                         
 
                          $palabrafinal=$trozos[$numero-1];
-                        
-                         $sql = "SELECT *,Match(label,city) AGAINST ('" . $search_term . "') as Score,
-                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
+
+                         $result=comprobarUltimaPalabra($palabrafinal);
+
+                         
+
+                         if($result==true)
+                         {
+
+                         $search_term= str_replace($palabrafinal , "" , $search_term);
+
+                         $sql = "SELECT label,street,latitude,longitude,
+                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                               ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+
+                       * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+
+                        * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
+
                             FROM navigar_fetch_xmldata 
-                            WHERE  Match(label) AGAINST ('" . $search_term . "')  and Match(city) AGAINST ('" . $palabrafinal . "') or alias1=('" . $palabrafinal . "' )
-                            ORDER BY Score DESC limit 0,30"; 
+                            WHERE  Match(label) AGAINST ('" . $search_term . "')  and   Match(city) AGAINST ('" . $palabrafinal . "') 
+                           HAVING distance < '" . $radius . "' 
+                        ORDER BY distance limit 0,30"; 
+
+                        }
 
 
 
@@ -1982,14 +2103,14 @@ ORDER BY distance";
                     
 
 
-/*
 
-                         $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
+
+                         $sql = "SELECT label,street,latitude,longitude,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
                              FROM navigar_fetch_xmldata 
                              WHERE  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE)  ORDER BY Score DESC  limit 0,20";
 
-*/
+
 
                     $res = mysql_query($sql);
 
@@ -2095,9 +2216,9 @@ ORDER BY distance";
                             //   where  `label` like '%" . $search_term . "%' 
                             //  *******************************************  
 
-/*
 
-               $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+
+               $sql = "SELECT label,street,latitude,longitude,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
                                          ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
@@ -2110,7 +2231,7 @@ ORDER BY distance";
 
                                          HAVING distance < '" . $radius . "' 
                                          ORDER BY distance limit 0,30";
-*/
+
 
 
                $res = mysql_query($sql);
@@ -2217,7 +2338,8 @@ ORDER BY distance";
                             //   where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)
                             //  *******************************************  
 
-                         $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
+
+                         $sql = "SELECT label,street,latitude,longitud,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
                              FROM navigar_fetch_xmldata 
                              where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)   ORDER BY Score DESC  limit 0,15";      
