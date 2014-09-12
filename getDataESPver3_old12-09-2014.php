@@ -2113,34 +2113,40 @@ ORDER BY distance";
                         
                         //   $palabrafinal=$trozos[$numero-1];
                         
-                        $result = comprobarUltimaPalabra($palabrafinal);
+                        $result = comprobarUltimaPalabra($palabrafinal)
                         
                         
                         
                         if ($result == true) {
                             
                             $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
+
+
+                             $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
+                           (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                        FROM navigar_fetch_xmldata 
+                        WHERE  Match(label) AGAINST ('" . $search_termCortado . "')  and   Match(street) AGAINST ('" . $palabrafinal . "') 
+                       
+                        ORDER BY Score DESC  limit 0,30";
                             
-                            
+                            /*
                             $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
                         FROM navigar_fetch_xmldata 
                         WHERE  Match(label) AGAINST ('" . $search_termCortado . "')  and   Match(street) AGAINST ('" . $palabrafinal . "')";
+                       
+                        
+                            
 
-                        $sql = $sql . " UNION ";
-
-
-                        $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
+                              $sql = $sql . " UNION ";
+                                
+                                $sql = $sql .  " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
                         FROM navigar_fetch_xmldata 
-                        WHERE  Match(label) AGAINST ('" . $search_term . "')  ";
-
+                        WHERE  Match(label) AGAINST ('" . $search_term . "') ";
                        
-                         $sql = $sql . " ORDER BY Score DESC  limit 0,30";
-                       
-
-                           
-                            
+                        $sql = $sql . "  ORDER BY Score DESC  limit 0,30";
+                            */
                             
                             /*
                             $sql = "SELECT id,label,street,latitude,longitude,phone,
@@ -2156,10 +2162,6 @@ ORDER BY distance";
                             HAVING distance < '" . $radius . "' 
                             ORDER BY distance limit 0,30"; 
                             */
-
-
-
-
                         }
                         
                         else {
