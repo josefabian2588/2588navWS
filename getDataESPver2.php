@@ -1805,6 +1805,20 @@ ORDER BY distance";
                     // Match(label) AGAINST ('" . $search_term . "')    
                     //  *******************************************     
 
+                    /*  CORRECTOR ORTOGRAFICO */  
+
+                         $Sugerencias = array();
+                        $palabras    = explode(" ", $search_term);
+                        $contador    = 1;
+                        foreach ($palabras as $palabra) {
+                            
+                            
+                            $resul = CorrectorOrtografico($palabra);
+                            array_push($Sugerencias, $resul);
+                        }
+                        
+                        $search_term = implode(" ", $Sugerencias);
+
 
 
 
@@ -1929,19 +1943,7 @@ ORDER BY distance";
                         //
                         //  *******************************************  
                         
-                        /*  CORRECTOR ORTOGRAFICO */  
-
-                         $Sugerencias = array();
-                        $palabras    = explode(" ", $search_term);
-                        $contador    = 1;
-                        foreach ($palabras as $palabra) {
-                            
-                            
-                            $resul = CorrectorOrtografico($palabra);
-                            array_push($Sugerencias, $resul);
-                        }
                         
-                        $search_term = implode(" ", $Sugerencias);
                     
 
 
