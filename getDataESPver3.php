@@ -1722,7 +1722,8 @@ ORDER BY distance";
                     $res = mysql_query($sql);
                     
                     
-                    
+                      
+              
                     
                     
                     /* OBTIENE LA PALABRA FINAL*/
@@ -1737,6 +1738,8 @@ ORDER BY distance";
                     
                     
                     
+
+
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN STREET   */
                     if ($resultPalabrafinal == true) {
                         
@@ -1773,6 +1776,7 @@ ORDER BY distance";
                             
                             
                             $sql = $sql . " UNION";
+
                             
                             $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
                                     (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
@@ -1799,51 +1803,30 @@ ORDER BY distance";
                         }
                         
                         $sql = $sql . "  ORDER BY Score DESC limit 0,40";
+
+
+
+                         $res = mysql_query($sql);
+                    
+                        $num = mysql_num_rows($res);
+
+                         if ($num <= 0) {
+
+                             $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
+                           (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
+                        FROM navigar_fetch_xmldata 
+                        WHERE  Match(label) AGAINST ('" . $search_term . "')  
+                       
+                        ORDER BY Score DESC  limit 0,30";
+
+
+                         }
+
+
+                    
                     }
                     
 
-                            /*
-                            
-                            $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
-                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
-                            FROM navigar_fetch_xmldata 
-                             where  Match(label) AGAINST ('" . $search_termCortado . "' )  and  Match(street) AGAINST ('" . $palabrafinal . "') ";
-                            
-                            
-                            
-                            
-                            $sql = $sql . " UNION";
-                            
-                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,
-                                    (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
-                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
-                                    FROM navigar_fetch_xmldata  
-                                    where Match(street) AGAINST ('" . $palabrafinal . "')  AND ( description = ";
-                            
-                            foreach ($arraySubHexcode as $values) {
-                                
-                                if ($arraySubHexcode[0] == $values) {
-                                    
-                                    $sql = $sql . "'" . $values . "'";
-                                    
-                                } else {
-                                    $sql = $sql . " or description = '" . $values . "' ";
-                                    
-                                }
-                                
-                            }
-                            
-                            $sql = $sql . " ) ";
-                        }
-                        
-                        $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
-                    }
-                    
-                    */
                     
                     
                     
@@ -1852,7 +1835,7 @@ ORDER BY distance";
                         
                         if ($numero == 1) {
                             
-                            
+                     
                             
                             // obtener el subhexcode                
                             while ($fila = mysql_fetch_assoc($res)) {
@@ -1915,6 +1898,8 @@ ORDER BY distance";
                         WHERE  Match(label) AGAINST ('" . $search_term . "')  
                        
                         ORDER BY Score DESC  limit 0,30";
+
+
                             
                             
                             
@@ -1928,8 +1913,7 @@ ORDER BY distance";
                     
                     
                     
-                    
-                    
+             
                     
                     $res = mysql_query($sql);
                     
@@ -2063,6 +2047,7 @@ ORDER BY distance";
                     /*SI ES SOLO UNA PALABRA , ORDENA POR DISTANCIA */
                     if ($numero == 1) {
                         
+
                         
                         /*  OBTIENE SI CONCUERTA CON ALGUN STREET  */
                         $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);
