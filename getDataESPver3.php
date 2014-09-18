@@ -79,6 +79,468 @@ function EliminarPalabrasComunes($cadena)
 }
 
 
+function PalabraDistritosPoblados($cadena)
+{
+    
+    $PalabraDisPobla = array(
+'ABANGARES',
+'ACOSTA',
+'AGUIRRE',
+'ALAJUELA',
+'ALAJUELITA',
+'ALFARO RUIZ',
+'ALVARADO',
+'ASERRI',
+'ATENAS',
+'BAGACES',
+'BARVA',
+'BELEN',
+'BUENOS AIRES',
+'CANAS',
+'CARRILLO',
+'CARTAGO',
+'CORREDORES',
+'COTO BRUS',
+'CURRIDABAT',
+'DESAMPARADOS',
+'DOTA',
+'EL GUARCO',
+'ESCAZU',
+'ESPARZA',
+'FLORES',
+'GARABITO',
+'GOICOECHEA',
+'GOLFITO',
+'GRECIA',
+'GUACIMO',
+'GUATUSO',
+'HEREDIA',
+'HOJANCHA',
+'JIMENEZ',
+'LA CRUZ',
+'LA UNION',
+'LEON CORTES',
+'LIBERIA',
+'LIMON',
+'LOS CHILES',
+'MATINA',
+'MONTES DE ORO',
+'MORA',
+'MORAVIA',
+'NANDAYURE',
+'NARANJO',
+'NICOYA',
+'OREAMUNO',
+'OROTINA',
+'OSA',
+'PALMARES',
+'PARAISO',
+'PARRITA',
+'PEREZ ZELEDON',
+'POAS',
+'POCOCI',
+'PUNTARENAS',
+'PURISCAL',
+'SAN CARLOS',
+'SAN JOSE',
+'SAN MATEO',
+'SAN RAFAEL',
+'SAN RAMON',
+'SANTA ANA',
+'SANTA BARBARA',
+'SANTA CRUZ',
+'SANTO DOMINGO',
+'SARAPIQUI',
+'SIQUIRRES',
+'TALAMANCA',
+'TARRAZU',
+'TIBAS',
+'TILARAN',
+'TURRIALBA',
+'TURRUBARES',
+'UPALA',
+'VALVERDE VEGA',
+'VAZQUEZ DE CORONADO',
+'ACAPULCO',
+'AGUABUENA',
+'AGUACALIENTE',
+'AGUAS CLARAS',
+'AGUAS ZARCAS',
+'ALAJUELA',
+'ALAJUELITA',
+'ALEGRIA',
+'ALFARO',
+'ANGELES',
+'ANSELMO LLORENTE',
+'ARANCIBIA',
+'ARENAL',
+'ASERRI',
+'ASUNCION',
+'ATENAS',
+'BAGACES',
+'BAHIA BALLENA',
+'BARBACOAS',
+'BARRANCA',
+'BARRANTES',
+'BARU',
+'BARVA',
+'BATAN',
+'BEBEDERO',
+'BEJUCO',
+'BELEN',
+'BELEN DE NOSARITA',
+'BIJAGUA',
+'BOLIVAR',
+'BOLSON',
+'BORUCA',
+'BRASIL',
+'BRATSI',
+'BRIOLLEY',
+'BRISAS',
+'BRUNKA',
+'BUENAVISTA',
+'BUENOS AIRES',
+'CABO VELAS',
+'CACHI',
+'CAHUITA',
+'CAJON',
+'CALLE BLANCOS',
+'CANAS',
+'CANAS DULCES',
+'CANDELARIA',
+'CANDELARITA',
+'CANGREJAL',
+'CANO NEGRO',
+'CANOAS',
+'CAPELLADES',
+'CARARA',
+'CARIARI',
+'CARMEN',
+'CARMONA',
+'CARRANDI',
+'CARRILLOS',
+'CARRIZAL',
+'CARTAGENA',
+'CASCAJAL',
+'CATEDRAL',
+'CEIBA',
+'CERVANTES',
+'CHACARITA',
+'CHANGENA',
+'CHIRA',
+'CHIRES',
+'CHIRRIPO',
+'CHOMES',
+'CINCO ESQUINAS',
+'CIPRESES',
+'CIRRI SUR',
+'COBANO',
+'COLIMA',
+'COLINAS',
+'COLON',
+'COLORADO',
+'CONCEPCION',
+'COPEY',
+'CORRALILLO',
+'CORREDOR',
+'COT',
+'COTE',
+'COYOLAR',
+'CUAJINIQUIL',
+'CURENA',
+'CURRIDABAT',
+'CURUBANDE',
+'CUTRIS',
+'DAMAS',
+'DANIEL FLORES',
+'DELICIAS',
+'DESAMPARADITOS',
+'DESAMPARADOS',
+'DESMONTE',
+'DIRIA',
+'DOS RIOS',
+'DUACARI',
+'DULCE NOMBRE',
+'DULCE NOMBRE DE JESUS',
+'EL AMPARO',
+'EL ROBLE',
+'ESCAZU',
+'ESCOBAL',
+'ESPIRITU SANTO',
+'ESQUIPULAS',
+'FILADELFIA',
+'FLORENCIA',
+'FLORIDA',
+'FORTUNA',
+'FRAILES',
+'GARITA',
+'GENERAL',
+'GERMANIA',
+'GOLFITO',
+'GRANADILLA',
+'GRANJA',
+'GRAVILIAS',
+'GRECIA',
+'GRIFO ALTO',
+'GUACIMA',
+'GUACIMAL',
+'GUACIMO',
+'GUADALUPE',
+'GUADALUPE (ARENILLA)',
+'GUAITIL',
+'GUAPILES',
+'GUAYABO',
+'GUAYCARA',
+'HACIENDA VIEJA',
+'HATILLO',
+'HEREDIA',
+'HOJANCHA',
+'HORQUETAS',
+'HOSPITAL',
+'HUACAS',
+'IPIS',
+'ISLA DEL COCO',
+'JACO',
+'JARDIN',
+'JESUS',
+'JESUS MARIA',
+'JIMENEZ',
+'JUAN VINAS',
+'JUNTAS',
+'LA CRUZ',
+'LA CUESTA',
+'LA ISABEL',
+'LA SUIZA',
+'LA VIRGEN',
+'LAGUNA',
+'LAUREL',
+'LEGUA',
+'LEON XIII',
+'LEPANTO',
+'LIBANO',
+'LIBERIA',
+'LIMON',
+'LIMONCITO',
+'LLANO BONITO',
+'LLANO GRANDE',
+'LLANOS DE SANTA LUCIA',
+'LLANURAS DEL GASPAR',
+'LLORENTE',
+'LOS CHILES',
+'LOS GUIDO',
+'MACACONA',
+'MANSION',
+'MANZANILLO',
+'MASTATE',
+'MATA DE PLATANO',
+'MATA REDONDA',
+'MATAMA',
+'MATINA',
+'MAYORGA',
+'MERCED',
+'MERCEDES',
+'MERCEDES SUR',
+'MIRAMAR',
+'MOGOTE',
+'MONTE ROMO',
+'MONTE VERDE',
+'MONTERREY',
+'NACASCOLO',
+'NARANJITO',
+'NARANJO',
+'NICOYA',
+'NOSARA',
+'OCCIDENTAL',
+'ORIENTAL',
+'OROSI',
+'OROTINA',
+'PACAYAS',
+'PACUARITO',
+'PALMAR',
+'PALMARES',
+'PALMERA',
+'PALMICHAL',
+'PALMIRA',
+'PAQUERA',
+'PARA',
+'PARACITO',
+'PARAISO',
+'PARAMO',
+'PARRITA',
+'PATALILLO',
+'PATARRA',
+'PAVAS',
+'PAVON',
+'PAVONES',
+'PEJIBAYE',
+'PENAS BLANCAS',
+'PICAGRES',
+'PIEDADES',
+'PIEDADES NORTE',
+'PIEDADES SUR',
+'PIEDRAS BLANCAS',
+'PIEDRAS NEGRAS',
+'PILAS',
+'PITAHAYA',
+'PITAL',
+'PITTIER',
+'PLATANARES',
+'POCORA',
+'POCOSOL',
+'POROZAL',
+'PORVENIR',
+'POTRERO CERRADO',
+'POTRERO GRANDE',
+'POZOS',
+'PUENTE DE PIEDRA',
+'PUERTO CARRILLO',
+'PUERTO CORTES',
+'PUERTO JIMENEZ',
+'PUERTO VIEJO',
+'PUNTARENAS',
+'PURABA',
+'PURRAL',
+'QUEBRADA GRANDE',
+'QUEBRADA HONDA',
+'QUEBRADILLA',
+'QUEPOS',
+'QUESADA',
+'RANCHO REDONDO',
+'RIBERA',
+'RIO AZUL',
+'RIO BLANCO',
+'RIO CUARTO',
+'RIO JIMENEZ',
+'RIO NARANJO',
+'RIO NUEVO',
+'RIO SEGUNDO',
+'RITA',
+'RIVAS',
+'RODRIGUEZ',
+'ROSARIO',
+'ROXANA',
+'SABALITO',
+'SABANA REDONDA',
+'SABANILLA',
+'SABANILLAS',
+'SALITRAL',
+'SALITRILLOS',
+'SAMARA',
+'SAN ANDRES',
+'SAN ANTONIO',
+'SAN CRISTOBAL',
+'SAN DIEGO',
+'SAN FELIPE',
+'SAN FRANCISCO',
+'SAN FRANCISCO DOS RIOS',
+'SAN GABRIEL',
+'SAN IGNACIO DE ACOSTA',
+'SAN ISIDRO',
+'SAN ISIDRO DEL GENERAL',
+'SAN JERONIMO',
+'SAN JOAQUIN DE FLORES',
+'SAN JORGE',
+'SAN JOSE',
+'SAN JOSE DE LA MONTANA',
+'SAN JOSECITO',
+'SAN JUAN',
+'SAN JUAN DE DIOS',
+'SAN JUAN DE MATA',
+'SAN JUAN GRANDE',
+'SAN LORENZO',
+'SAN LUIS',
+'SAN MARCOS',
+'SAN MATEO',
+'SAN MIGUEL',
+'SAN NICOLAS',
+'SAN PABLO',
+'SAN PEDRO',
+'SAN RAFAEL',
+'SAN RAFAEL ABAJO',
+'SAN RAFAEL ARRIBA',
+'SAN RAMON',
+'SAN ROQUE',
+'SAN SEBASTIAN',
+'SAN VICENTE',
+'SAN VITO',
+'SANCHEZ',
+'SANTA ANA',
+'SANTA BARBARA',
+'SANTA CECILIA',
+'SANTA CRUZ',
+'SANTA ELENA',
+'SANTA EULALIA',
+'SANTA LUCIA',
+'SANTA MARIA',
+'SANTA RITA',
+'SANTA ROSA',
+'SANTA TERESITA',
+'SANTIAGO',
+'SANTO DOMINGO',
+'SANTO TOMAS',
+'SARAPIQUI',
+'SARCHI NORTE',
+'SARCHI SUR',
+'SARDINAL',
+'SAVEGRE',
+'SIERPE',
+'SIERRA',
+'SIQUIRRES',
+'SIXAOLA',
+'TABARCIA',
+'TACARES',
+'TAMARINDO',
+'TAMBOR',
+'TAPEZCO',
+'TARBACA',
+'TARCOLES',
+'TAYUTIC',
+'TEJAR',
+'TELIRE',
+'TEMPATE',
+'TIERRA BLANCA',
+'TIERRAS MORENAS',
+'TIGRA',
+'TILARAN',
+'TIRRASES',
+'TOBOSI',
+'TORO AMARILLO',
+'TRES EQUIS',
+'TRES RIOS',
+'TRINIDAD',
+'TRONADORA',
+'TUCURRIQUE',
+'TUIS',
+'TURES',
+'TURRIALBA',
+'TURRUCARES',
+'ULLOA',
+'UNION',
+'UPALA',
+'URUCA',
+'VALLE LA ESTRELLA',
+'VARABLANCA',
+'VEINTISIETE DE ABRIL',
+'VENADO',
+'VENECIA',
+'VOLCAN',
+'VOLIO',
+'VUELTA DE JORCO',
+'YOLILLAL',
+'ZAPOTAL',
+'ZAPOTE',
+'ZARAGOZA',
+'ZARCERO',
+
+
+    );
+  
+
+
+
+    
+}
+
 
 function ObtenerTerminosDirectorio()
 {
@@ -1436,12 +1898,49 @@ ORDER BY distance";
             $search_term = ((isset($_REQUEST['search_term'])) ? $_REQUEST['search_term'] : '');
             $search_term = normaliza($search_term);
             trim($search_term);
-            $search_term = EliminarPalabrasComunes($search_term);
+            //  $search_term = EliminarPalabrasComunes($search_term);
+
+
+             $trozos         = explode(" ", $search_term);
+                
+
+if(1<count($trozos)){
+
+    $NombreZona="";
+    $ZonaActivada=false;
+           
+
+//Recorro todos los elementos
+
+for($i=1;$i<=count($trozos);$i++) {
+
+
+    if($trozos[$i] =='de')
+      {
+            $ZonaActivada=true;
+
+            for($e=$i; $e<count($trozos); $e++)
+                {                   
+                    $NombreZona =$NombreZona. $trozos[$e+1];
+                    $NombreZona =$NombreZona." ";  
+                    
+                }
+      }
+
+   }
+
+$search_term = EliminarPalabrasComunes($search_term);
+
+}
+
+
+                   
+
             
             //*** 09-4-14 insertar el registro de la busqueda 
             
-            //  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
-            //  mysql_query($sql_insertrecord);
+    //       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
+    //        mysql_query($sql_insertrecord);
             
             //  }
             
@@ -1717,34 +2216,47 @@ ORDER BY distance";
                 if ($TerminoEncontrado == 1) {
                     
                     
-                    
-                    $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
-                    $res = mysql_query($sql);
-                    
-                    
-                      
-              
-                    
+               
+
                     
                     /* OBTIENE LA PALABRA FINAL*/
-                    $palabrafinal = $trozos[$numero - 1];
+                  //$palabrafinal = $trozos[$numero - 1];
+                    $palabrafinal = $NombreZona;
+
+
                     /*  OBTIENE SI CONCUERTA CON ALGUN STREET  */
                     
+                    /*
                     if ($numero > 1)
-                        $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);
+                      //$resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);
+                      
                     else
                         $resultPalabrafinal = false;
                     // $num  = mysql_num_rows($res);
                     
+                    */
                     
-                    
-
+                       
 
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN STREET   */
-                    if ($resultPalabrafinal == true) {
-                        
-                        $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
-                        
+                    if ($ZonaActivada == true) {
+
+                            $search_termCortado = str_ireplace($palabrafinal,"", $search_term);
+
+
+                          
+
+                               //   $search_termCortado = str_ireplace($palabrafinal,"", $search_term);
+
+                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $palabrafinal . "'";
+           mysql_query($sql_insertrecord);
+
+
+                    // $search_termCortado = str_ireplace($NombreZona, "", $search_term);
+                      
+
+           $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_termCortado . "'";
+           mysql_query($sql_insertrecord);
                         
                         while ($fila = mysql_fetch_assoc($res)) {
                             
