@@ -29,8 +29,7 @@ function EliminarPalabrasComunes($cadena)
         'a',
         'el',
         ' los',
-        'les',
-        
+        'les',        
         'del',
         'y',
         'o',
@@ -55,8 +54,7 @@ function EliminarPalabrasComunes($cadena)
         'algunas',
         'es',
         'lo',
-        'al',
-       
+        'al',      
         'con',
         'las',
         'le',
@@ -96,6 +94,483 @@ function EliminarPalabrasComunesExtras($cadena)
     {
         return !in_array($word, $PalabrasComunes);
     }));
+    
+}
+
+function PalabraDistritosPoblados($cadena)
+{
+
+
+    $PalabraDisPobla = array(
+'abangares',
+'acosta',
+'aguirre',
+'alajuela',
+'alajuelita',
+'alfaro ruiz',
+'alvarado',
+'aserri',
+'atenas',
+'bagaces',
+'barva',
+'belen',
+'buenos aires',
+'canas',
+'carrillo',
+'cartago',
+'corredores',
+'coto brus',
+'curridabat',
+'desamparados',
+'dota',
+'el guarco',
+'escazu',
+'esparza',
+'flores',
+'garabito',
+'goicoechea',
+'golfito',
+'grecia',
+'guacimo',
+'guatuso',
+'heredia',
+'hojancha',
+'jimenez',
+'la cruz',
+'la union',
+'leon cortes',
+'liberia',
+'limon',
+'los chiles',
+'matina',
+'montes de oro',
+'mora',
+'moravia',
+'nandayure',
+'naranjo',
+'nicoya',
+'oreamuno',
+'orotina',
+'osa',
+'palmares',
+'paraiso',
+'parrita',
+'perez zeledon',
+'poas',
+'pococi',
+'puntarenas',
+'puriscal',
+'san carlos',
+'san jose',
+'san mateo',
+'san rafael',
+'san ramon',
+'santa ana',
+'santa barbara',
+'santa cruz',
+'santo domingo',
+'sarapiqui',
+'siquirres',
+'talamanca',
+'tarrazu',
+'tibas',
+'tilaran',
+'turrialba',
+'turrubares',
+'upala',
+'valverde vega',
+'vazquez de coronado',
+'acapulco',
+'aguabuena',
+'aguacaliente',
+'aguas claras',
+'aguas zarcas',
+'alajuela',
+'alajuelita',
+'alegria',
+'alfaro',
+'angeles',
+'anselmo llorente',
+'arancibia',
+'arenal',
+'aserri',
+'asuncion',
+'atenas',
+'bagaces',
+'bahia ballena',
+'barbacoas',
+'barranca',
+'barrantes',
+'baru',
+'barva',
+'batan',
+'bebedero',
+'bejuco',
+'belen',
+'belen de nosarita',
+'bijagua',
+'bolivar',
+'bolson',
+'boruca',
+'brasil',
+'bratsi',
+'briolley',
+'brisas',
+'brunka',
+'buenavista',
+'buenos aires',
+'cabo velas',
+'cachi',
+'cahuita',
+'cajon',
+'calle blancos',
+'canas',
+'canas dulces',
+'candelaria',
+'candelarita',
+'cangrejal',
+'cano negro',
+'canoas',
+'capellades',
+'carara',
+'cariari',
+'carmen',
+'carmona',
+'carrandi',
+'carrillos',
+'carrizal',
+'cartagena',
+'cascajal',
+'catedral',
+'ceiba',
+'cervantes',
+'chacarita',
+'changena',
+'chira',
+'chires',
+'chirripo',
+'chomes',
+'cinco esquinas',
+'cipreses',
+'cirri sur',
+'cobano',
+'colima',
+'colinas',
+'colon',
+'colorado',
+'concepcion',
+'copey',
+'corralillo',
+'corredor',
+'cot',
+'cote',
+'coyolar',
+'cuajiniquil',
+'curena',
+'curridabat',
+'curubande',
+'cutris',
+'damas',
+'daniel flores',
+'delicias',
+'desamparaditos',
+'desamparados',
+'desmonte',
+'diria',
+'dos rios',
+'duacari',
+'dulce nombre',
+'dulce nombre de jesus',
+'el amparo',
+'el roble',
+'escazu',
+'escobal',
+'espiritu santo',
+'esquipulas',
+'filadelfia',
+'florencia',
+'florida',
+'fortuna',
+'frailes',
+'garita',
+'general',
+'germania',
+'golfito',
+'granadilla',
+'granja',
+'gravilias',
+'grecia',
+'grifo alto',
+'guacima',
+'guacimal',
+'guacimo',
+'guadalupe',
+'guadalupe (arenilla)',
+'guaitil',
+'guapiles',
+'guayabo',
+'guaycara',
+'hacienda vieja',
+'hatillo',
+'heredia',
+'hojancha',
+'horquetas',
+'hospital',
+'huacas',
+'ipis',
+'isla del coco',
+'jaco',
+'jardin',
+'jesus',
+'jesus maria',
+'jimenez',
+'juan vinas',
+'juntas',
+'la cruz',
+'la cuesta',
+'la isabel',
+'la suiza',
+'la virgen',
+'laguna',
+'laurel',
+'legua',
+'leon xiii',
+'lepanto',
+'libano',
+'liberia',
+'limon',
+'limoncito',
+'llano bonito',
+'llano grande',
+'llanos de santa lucia',
+'llanuras del gaspar',
+'llorente',
+'los chiles',
+'los guido',
+'macacona',
+'mansion',
+'manzanillo',
+'mastate',
+'mata de platano',
+'mata redonda',
+'matama',
+'matina',
+'mayorga',
+'merced',
+'mercedes',
+'mercedes sur',
+'miramar',
+'mogote',
+'monte romo',
+'monte verde',
+'monterrey',
+'nacascolo',
+'naranjito',
+'naranjo',
+'nicoya',
+'nosara',
+'occidental',
+'oriental',
+'orosi',
+'orotina',
+'pacayas',
+'pacuarito',
+'palmar',
+'palmares',
+'palmera',
+'palmichal',
+'palmira',
+'paquera',
+'para',
+'paracito',
+'paraiso',
+'paramo',
+'parrita',
+'patalillo',
+'patarra',
+'pavas',
+'pavon',
+'pavones',
+'pejibaye',
+'penas blancas',
+'picagres',
+'piedades',
+'piedades norte',
+'piedades sur',
+'piedras blancas',
+'piedras negras',
+'pilas',
+'pitahaya',
+'pital',
+'pittier',
+'platanares',
+'pocora',
+'pocosol',
+'porozal',
+'porvenir',
+'potrero cerrado',
+'potrero grande',
+'pozos',
+'puente de piedra',
+'puerto carrillo',
+'puerto cortes',
+'puerto jimenez',
+'puerto viejo',
+'puntarenas',
+'puraba',
+'purral',
+'quebrada grande',
+'quebrada honda',
+'quebradilla',
+'quepos',
+'quesada',
+'rancho redondo',
+'ribera',
+'rio azul',
+'rio blanco',
+'rio cuarto',
+'rio jimenez',
+'rio naranjo',
+'rio nuevo',
+'rio segundo',
+'rita',
+'rivas',
+'rodriguez',
+'rosario',
+'roxana',
+'sabalito',
+'sabana redonda',
+'sabanilla',
+'sabanillas',
+'salitral',
+'salitrillos',
+'samara',
+'san andres',
+'san antonio',
+'san cristobal',
+'san diego',
+'san felipe',
+'san francisco',
+'san francisco dos rios',
+'san gabriel',
+'san ignacio de acosta',
+'san isidro',
+'san isidro del general',
+'san jeronimo',
+'san joaquin de flores',
+'san jorge',
+'san jose',
+'san jose de la montana',
+'san josecito',
+'san juan',
+'san juan de dios',
+'san juan de mata',
+'san juan grande',
+'san lorenzo',
+'san luis',
+'san marcos',
+'san mateo',
+'san miguel',
+'san nicolas',
+'san pablo',
+'san pedro',
+'san rafael',
+'san rafael abajo',
+'san rafael arriba',
+'san ramon',
+'san roque',
+'san sebastian',
+'san vicente',
+'san vito',
+'sanchez',
+'santa ana',
+'santa barbara',
+'santa cecilia',
+'santa cruz',
+'santa elena',
+'santa eulalia',
+'santa lucia',
+'santa maria',
+'santa rita',
+'santa rosa',
+'santa teresita',
+'santiago',
+'santo domingo',
+'santo tomas',
+'sarapiqui',
+'sarchi norte',
+'sarchi sur',
+'sardinal',
+'savegre',
+'sierpe',
+'sierra',
+'siquirres',
+'sixaola',
+'tabarcia',
+'tacares',
+'tamarindo',
+'tambor',
+'tapezco',
+'tarbaca',
+'tarcoles',
+'tayutic',
+'tejar',
+'telire',
+'tempate',
+'tierra blanca',
+'tierras morenas',
+'tigra',
+'tilaran',
+'tirrases',
+'tobosi',
+'toro amarillo',
+'tres equis',
+'tres rios',
+'trinidad',
+'tronadora',
+'tucurrique',
+'tuis',
+'tures',
+'turrialba',
+'turrucares',
+'ulloa',
+'union',
+'upala',
+'uruca',
+'valle la estrella',
+'varablanca',
+'veintisiete de abril',
+'venado',
+'venecia',
+'volcan',
+'volio',
+'vuelta de jorco',
+'yolillal',
+'zapotal',
+'zapote',
+'zaragoza',
+'zarcero'
+
+
+    );
+
+
+
+ 
+/*
+  
+    if (in_array($cadena, $PalabraDisPobla) )
+    {
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+*/
+    return in_array($cadena, $PalabraDisPobla);
+
     
 }
 
@@ -1455,7 +1930,7 @@ ORDER BY distance";
             
             $search_term = ((isset($_REQUEST['search_term'])) ? $_REQUEST['search_term'] : '');
             $search_term = normaliza($search_term);
-            trim($search_term);
+            $search_term=trim($search_term);
             $search_term = EliminarPalabrasComunes($search_term);
             
             //*** 09-4-14 insertar el registro de la busqueda 
@@ -1465,6 +1940,48 @@ ORDER BY distance";
             
             //  }
             
+
+
+            
+            $trozos = explode(" ", $search_term);    
+
+
+
+
+if(1<count($trozos)){
+
+    $NombreZona="";
+    $ZonaActivada=false;
+           
+
+//Recorro todos los elementos
+
+for($i=1;$i<=count($trozos);$i++) {
+
+
+    if($trozos[$i] =='de' or $trozos[$i] =='en')
+      {
+          //  $ZonaActivada=true;
+
+            for($e=$i; $e<count($trozos); $e++)
+                {                   
+                    $NombreZona =$NombreZona. $trozos[$e+1];
+                    $NombreZona =$NombreZona." ";  
+                    
+                }
+      }
+
+   }
+
+$search_term = EliminarPalabrasComunesExtras($search_term);
+
+}
+
+
+
+
+
+
             
             
             $main_category_id = ((isset($_REQUEST['main_category_id'])) ? $_REQUEST['main_category_id'] : '');
@@ -1693,7 +2210,7 @@ ORDER BY distance";
                 
                 $TerminoEncontrado = 0;
                 $coincidencia      = 0;
-                trim($search_term);
+                $search_term=trim($search_term);
                 
                 
                 
@@ -1747,23 +2264,53 @@ ORDER BY distance";
                     
                     
                     /* OBTIENE LA PALABRA FINAL*/
-                    $palabrafinal = $trozos[$numero - 1];
+                 
+                   // $palabrafinal = $NombreZona;
+                    $palabrafinal=trim($NombreZona);
                     /*  OBTIENE SI CONCUERTA CON ALGUN STREET  */
-                    
+                    /*
                     if ($numero > 1)
                         $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);
                     else
+
                         $resultPalabrafinal = false;
+                        */
                     // $num  = mysql_num_rows($res);
                     
+                       
+                    if (count($trozos) > 1)
+                    {
                     
-                    
+                        $resultPalabrafinal=PalabraDistritosPoblados($palabrafinal);     
+                        
+                    }
+                      else
+
+                        $resultPalabrafinal = false;
 
 
+                     /* OBTIENE LA PALABRA FINAL*/
+                 //   $palabrafinal = $trozos[$numero - 1];
+                     //$palabrafinal = $NombreZona;
+                    /*  OBTIENE SI CONCUERTA CON ALGUN STREET  */
+                    /*
+                    if ($numero > 1)
+                        $resultPalabrafinal = true;
+                    else
+                        $resultPalabrafinal = false;
+                    // $num  = mysql_num_rows($res);
+                    */
+                    
+                    
+                    
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN STREET   */
                     if ($resultPalabrafinal == true) {
                         
                         $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
+/*
+                        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_termCortado . "'";
+                        mysql_query($sql_insertrecord);
+*/
                         
                         
                         while ($fila = mysql_fetch_assoc($res)) {
@@ -1784,7 +2331,7 @@ ORDER BY distance";
                             */
                             
 
-                                $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
+                                $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
@@ -1798,7 +2345,7 @@ ORDER BY distance";
                             $sql = $sql . " UNION";
 
                             
-                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
+                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
                                     (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                     ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
