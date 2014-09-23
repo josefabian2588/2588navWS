@@ -1614,9 +1614,14 @@ inner join navigar_poitype as t2 on t2.id=t1.poi_type
             
             
             $imei = ((isset($_REQUEST['imei'])) ? $_REQUEST['imei'] : '');
+
+
+            $review_desc=trim($review_desc);
             
+            /* Quitar Acentos  */ 
             
-            
+            $review_desc=normaliza($review_desc);
+       
             if ($poi_id != '' && $review_desc != '' && $rate != '') {
                 
                 
@@ -1974,6 +1979,8 @@ for($i=1;$i<=count($trozos);$i++) {
    }
 
 $search_term = EliminarPalabrasComunesExtras($search_term);
+$NombreZona =  EliminarPalabrasComunesExtras($NombreZona);
+
 
 }
 
@@ -2339,8 +2346,11 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                             FROM navigar_fetch_xmldata 
                              where  Match(label) AGAINST ('" . $search_termCortado . "' )  and  Match(street) AGAINST ('" . $palabrafinal . "') ";
                             
-                            
-                            
+                      
+
+
+
+
                             
                             $sql = $sql . " UNION";
 
