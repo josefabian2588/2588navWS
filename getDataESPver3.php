@@ -615,7 +615,7 @@ function ObtenerTerminosDirectorio()
 function comprobarUltimaPalabra($palabrafinal)
 {
     $result          = false;
-    $sqlpalabrafinal = "SELECT distinct street FROM  navigar_fetch_xmldata where Match(street) AGAINST ('" . $palabrafinal . "') ";
+    $sqlpalabrafinal = "SELECT distinct street, Match(street) AGAINST ('" . $palabrafinal . "')  as Score FROM  navigar_fetch_xmldata where Match(street) AGAINST ('" . $palabrafinal . "') ORDER BY Score DESC  limit 0,5";
     $resFilaCity     = mysql_query($sqlpalabrafinal);
     
     if (mysql_num_rows($resFilaCity) > 0) // verifica que existe algun city que concuerde 
@@ -1136,9 +1136,9 @@ try {
             
             
             
-            $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '-33.8670522');
+            $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '9.954376');
             
-            $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '151.1957362');
+            $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '-84.127636');
             
             
             
@@ -1961,26 +1961,32 @@ if(1<count($trozos)){
 
 //Recorro todos los elementos
 
+    $LimiteNombreZona=0;
 for($i=1;$i<=count($trozos);$i++) {
 
 
     if($trozos[$i] =='de' or $trozos[$i] =='en')
       {
           //  $ZonaActivada=true;
-
-            for($e=$i; $e<count($trozos); $e++)
-                {                   
+            if($LimiteNombreZona==0){
+                 $LimiteNombreZona=1;
+                 for($e=$i; $e<count($trozos); $e++)
+                 {                   
                     $NombreZona =$NombreZona. $trozos[$e+1];
                     $NombreZona =$NombreZona." ";  
                     
+                 }
+
                 }
       }
 
    }
 
 $search_term = EliminarPalabrasComunesExtras($search_term);
-$NombreZona =  EliminarPalabrasComunesExtras($NombreZona);
+$NombreZona = EliminarPalabrasComunesExtras($NombreZona);
 
+   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
+   mysql_query($sql_insertrecord);
 
 }
 
@@ -2080,16 +2086,16 @@ $NombreZona =  EliminarPalabrasComunesExtras($NombreZona);
                 {
                 // si es verdadero asigna las variables que vienen del iphone latitude y longitude (no tiene el c_ al inicio)
                 
-                $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '-33.8670522');
+                $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '9.954376');
                 
-                $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '151.1957362');
+                $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '-84.127636');
                 
                 
             } else {
                 //si entra al falso es porq viene de un android 
-                $latitude = ((isset($_REQUEST['c_latitude'])) ? $_REQUEST['c_latitude'] : '-33.8670522');
+                $latitude = ((isset($_REQUEST['c_latitude'])) ? $_REQUEST['c_latitude'] : '9.954376');
                 
-                $longitude = ((isset($_REQUEST['c_longitude'])) ? $_REQUEST['c_longitude'] : '151.1957362');
+                $longitude = ((isset($_REQUEST['c_longitude'])) ? $_REQUEST['c_longitude'] : '-84.127636');
                 
             }
             
@@ -2288,7 +2294,12 @@ $NombreZona =  EliminarPalabrasComunesExtras($NombreZona);
                     if (count($trozos) > 1)
                     {
                     
-                        $resultPalabrafinal=PalabraDistritosPoblados($palabrafinal);     
+                       $resultPalabrafinal=PalabraDistritosPoblados($palabrafinal);   
+
+                     //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $palabrafinal . "'";
+                    //   mysql_query($sql_insertrecord);
+
+                   //      $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);  
                         
                     }
                       else
@@ -2314,10 +2325,10 @@ $NombreZona =  EliminarPalabrasComunesExtras($NombreZona);
                     if ($resultPalabrafinal == true) {
                         
                         $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
-/*
-                        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_termCortado . "'";
-                        mysql_query($sql_insertrecord);
-*/
+
+                   //     $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_termCortado . "'";
+                   //     mysql_query($sql_insertrecord);
+
                         
                         
                         while ($fila = mysql_fetch_assoc($res)) {
@@ -2355,7 +2366,7 @@ $NombreZona =  EliminarPalabrasComunesExtras($NombreZona);
                             $sql = $sql . " UNION";
 
                             
-                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
+                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $palabrafinal . "') as Score,
                                     (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                     ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
