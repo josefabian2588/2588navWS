@@ -1964,7 +1964,7 @@ if(1<count($trozos)){
 
 //Recorro todos los elementos
     $palabraZonaExtra="";
-    $LimiteNombreZona=0;
+    $contadorZonaAUX=0;
 for($i=1;$i<=count($trozos);$i++) {
 
 
@@ -1972,15 +1972,15 @@ for($i=1;$i<=count($trozos);$i++) {
       {
           //  $ZonaActivada=true;
             if($LimiteNombreZona==0){  /* 0 , primera vez que encuentra "de"  o "en" */
-                 $LimiteNombreZona=1;
-
-                 for($e=$i; $e<count($trozos); $e++)
-                 {                   
-                    $NombreZona =$NombreZona. $trozos[$e+1];
-                    $NombreZona =$NombreZona." ";  
-                    
-                 }
-
+                
+               if($contadorZonaAUX==0){
+                     for($e=$i; $e<count($trozos); $e++)
+                     {                   
+                        $NombreZona =$NombreZona. $trozos[$e+1];
+                        $NombreZona =$NombreZona." ";  
+                        $contadorZonaAUX++;
+                     }
+                  }      
 
                 }  /* 1 , segunda o + vez que encuentra "de"  o "en" */
                 
@@ -1989,10 +1989,10 @@ for($i=1;$i<=count($trozos);$i++) {
    }
 
 $search_term = EliminarPalabrasComunesExtras($search_term);
-$NombreZona = EliminarPalabrasComunesExtras($NombreZona);
+//$NombreZona = EliminarPalabrasComunesExtras($NombreZona);
 
- //  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
- //  mysql_query($sql_insertrecord);
+   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
+   mysql_query($sql_insertrecord);
 
 }
 
@@ -2308,6 +2308,9 @@ $NombreZona = EliminarPalabrasComunesExtras($NombreZona);
 
 
             }
+
+
+
                
 
                 
@@ -2322,7 +2325,7 @@ $NombreZona = EliminarPalabrasComunesExtras($NombreZona);
                     
                     $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                     $res = mysql_query($sql);
-                    
+                    $sql ="";
                     
                       
               
@@ -2444,9 +2447,9 @@ $NombreZona = EliminarPalabrasComunesExtras($NombreZona);
                             $sql = $sql . " ) ";
                         }
                         
-                        $sql = $sql . "  ORDER BY Score DESC limit 0,40";
+                     //   $sql = $sql . "  ORDER BY Score DESC limit 0,40";
 
-
+                         $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
 
 
                          
