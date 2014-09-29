@@ -615,7 +615,7 @@ function ObtenerTerminosDirectorio()
 function comprobarUltimaPalabra($palabrafinal)
 {
     $result          = false;
-    $sqlpalabrafinal = "SELECT distinct street, Match(street) AGAINST ('" . $palabrafinal . "')  as Score FROM  navigar_fetch_xmldata where Match(street) AGAINST ('" . $palabrafinal . "') ORDER BY Score DESC  limit 0,5";
+    $sqlpalabrafinal = "SELECT distinct street, Match(street) AGAINST ('" . $palabrafinal . "')  as Score FROM  navigar_fetch_xmldata where Match(street) AGAINST ('" . $palabrafinal . "') ORDER BY Score DESC  limit 0,3";
     $resFilaCity     = mysql_query($sqlpalabrafinal);
     
     if (mysql_num_rows($resFilaCity) > 0) // verifica que existe algun city que concuerde 
@@ -1948,12 +1948,8 @@ ORDER BY distance";
             //  }
             
 
-
             
-            $trozos = explode(" ", $search_term);    
-
-
-
+$trozos = explode(" ", $search_term);    
 
 if(1<count($trozos)){
 
@@ -1989,10 +1985,10 @@ for($i=1;$i<=count($trozos);$i++) {
    }
 
 $search_term = EliminarPalabrasComunesExtras($search_term);
-//$NombreZona = EliminarPalabrasComunesExtras($NombreZona);
-
-   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
-   mysql_query($sql_insertrecord);
+$NombreZona = EliminarPalabrasComunesExtras($NombreZona);
+$palabrafinal=trim($NombreZona);
+  // $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
+  // mysql_query($sql_insertrecord);
 
 }
 
@@ -2336,7 +2332,7 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                     /* OBTIENE LA PALABRA FINAL*/
                  
                    // $palabrafinal = $NombreZona;
-                    $palabrafinal=trim($NombreZona);
+                   // $palabrafinal=trim($NombreZona);
                     /*  OBTIENE SI CONCUERTA CON ALGUN STREET  */
                     /*
                     if ($numero > 1)
@@ -2355,8 +2351,8 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
 
                      //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $palabrafinal . "'";
                     //   mysql_query($sql_insertrecord);
-
-                   //      $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);  
+                       if ($resultPalabrafinal==false)
+                             $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);  
                         
                     }
                       else
@@ -2595,6 +2591,12 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
 
                         */
                                 
+                                
+             //  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
+        //         mysql_query($sql_insertrecord);
+       
+                                
+                                
                              // obtener el subhexcode                
                             while ($fila = mysql_fetch_assoc($res)) {
                                 
@@ -2616,7 +2618,7 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                                 
                                 
                                 $sql = $sql . " UNION";
-                                */
+                             
 
                          
 
@@ -2628,7 +2630,36 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                                     * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
                                     FROM navigar_fetch_xmldata 
                                      where description = ";
-                                
+                               
+                             */  
+
+
+                                      $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termIntacto . "') as Score,
+                                (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
+                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
+                            FROM navigar_fetch_xmldata 
+                             where  Match(label) AGAINST ('" . $search_termIntacto . "' ) ";
+                            
+                      
+
+
+
+
+                            
+                            $sql = $sql . " UNION";
+
+                            
+                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $palabrafinal . "') as Score,
+                                    (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
+                                    FROM navigar_fetch_xmldata  
+                                    where  description = ";
+
+
                                 foreach ($arraySubHexcode as $values) {
                                     
                                     if ($arraySubHexcode[0] == $values) {
@@ -2645,8 +2676,8 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                                     
                                 }
                                 
-                                $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
-
+                              //  $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
+                                   $sql = $sql . "ORDER BY Score DESC  limit 0,30";
                             }
 
 
@@ -2752,16 +2783,14 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                         
                     }
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+
                     
                 } //termina busquedas por terminos 
                 
+
+
+
+
                 else {
                     
                     
@@ -2783,11 +2812,11 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                     
                     /*  contar palabras  */
                     
-                    
+                    /*
                     $trozos       = explode(" ", $search_term);
                     $numero       = count($trozos);
                     $palabrafinal = $trozos[$numero - 1];
-                    
+                    */
                     
                     
                     
@@ -2798,11 +2827,11 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
 
                         
                         /*  OBTIENE SI CONCUERTA CON ALGUN STREET  */
-                        $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);
+                    //    $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);
                         //    $resultPalabrafinal=false;
                         
                         /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN STREET   */
-                        
+                        /*
                         if ($resultPalabrafinal == true) {
                             
                             
@@ -2817,7 +2846,7 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                         }
                         
                         else {
-                            
+                            */
                             
                             $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
@@ -2832,25 +2861,28 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                         HAVING distance < '" . $radius . "' 
                         ORDER BY distance limit 0,30";
                             
-                        }
+                     //   }
                         
                     }
                     
                     
-                    
-                    
-                    /*SI ES *MAS* DE UNA PALABRA , */
-                    /*                             */
+                     
+                    /*                               */    
+                    /*  SI ES *MAS* DE UNA PALABRA   */
+                    /*                               */
                     else {
                         
                         
                         //   $palabrafinal=$trozos[$numero-1];
+                        $result=PalabraDistritosPoblados($palabrafinal); 
+
                         
-                        $result = comprobarUltimaPalabra($palabrafinal);
                         
-                        
-                        
+                            /* la ultima palabra es un street */ 
                         if ($result == true) {
+
+                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
+              mysql_query($sql_insertrecord);
                             
                             $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
                             
@@ -2863,12 +2895,13 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                         $sql = $sql . " UNION ";
 
 
-                        $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
+                        $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating
                         FROM navigar_fetch_xmldata 
-                        WHERE  Match(label) AGAINST ('" . $search_term . "')  ";
+                        WHERE  Match(label) AGAINST ('" . $search_termCortado . "')  ";
 
-                       
+                     
+
                          $sql = $sql . " ORDER BY Score DESC  limit 0,30";
                        
 
@@ -2895,6 +2928,7 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
 
                         }
                         
+                            /* ultima palabra no es un street */
                         else {
                             
                             /*  CORRECTOR ORTOGRAFICO */
@@ -2911,6 +2945,8 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                             
                             $search_term = implode(" ", $Sugerencias);
                             
+                         
+
                             $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
                                          FROM navigar_fetch_xmldata 
@@ -3154,7 +3190,6 @@ $search_term = EliminarPalabrasComunesExtras($search_term);
                             // match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE) 
                             //
                             //  *******************************************  
-                            
                             
                             
                             
