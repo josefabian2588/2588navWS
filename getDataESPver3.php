@@ -2633,7 +2633,7 @@ $palabrafinal=trim($NombreZona);
                                
                              */  
 
-
+/*
                                       $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termIntacto . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
@@ -2643,15 +2643,12 @@ $palabrafinal=trim($NombreZona);
                              where  Match(label) AGAINST ('" . $search_termIntacto . "' ) ";
                             
                       
-
-
-
-
                             
                             $sql = $sql . " UNION";
-
-                            
-                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $palabrafinal . "') as Score,
+*/
+                             $sql ="";
+                             /*
+                            $sql = $sql . "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $search_termIntacto . "') as Score,
                                     (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                     ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
@@ -2659,6 +2656,14 @@ $palabrafinal=trim($NombreZona);
                                     FROM navigar_fetch_xmldata  
                                     where  description = ";
 
+*/
+                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,
+                                    (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
+                                    FROM navigar_fetch_xmldata 
+                                     where description = ";
 
                                 foreach ($arraySubHexcode as $values) {
                                     
@@ -2676,8 +2681,8 @@ $palabrafinal=trim($NombreZona);
                                     
                                 }
                                 
-                              //  $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
-                                   $sql = $sql . "ORDER BY Score DESC  limit 0,30";
+                                $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
+                               //    $sql = $sql . "ORDER BY Score DESC  limit 0,30";
                             }
 
 
