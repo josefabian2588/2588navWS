@@ -2,9 +2,8 @@ TODO
 -----------
 1-Busqueda por alias (Ej:"BK" y "MC").    /*FUNCIONA*/
 
-2-La lista de resultados se ordena por mejor coincidencia de búsqueda y no  por distancia, 
-  lo anterior cuando se  realiza una búsqueda por un termino  (Ej: "Bar","Pasteles"  ) . /*FUNCIONA*/
-      ***Busqueda por terminos compuestos ("tomar presion") . /*FUNCIONA*/
+2-La lista de resultados se ordena por distancia, lo anterior cuando se  realiza una búsqueda por un termino simple  (Ej: "Bar","Pasteles" ) . /*FUNCIONA*/
+      ***Busqueda por terminos compuestos ("tomar presion") . /*MALO*/
       
 3-Busqueda termino + nombre (Ej: "Bar Malibu" , "Ferreteria EPA" y "Banco Davivienda") . /*MALO*/
 
