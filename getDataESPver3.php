@@ -10,6 +10,7 @@ include('includes/correctorortografico.php');
 require_once 'stemm_es.php';
 
 
+
 function normaliza($cadena)
 {
     $originales  = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ
@@ -39,6 +40,7 @@ $trozos = explode(" ", $cadena);
 if(count($trozos)>=1) {
 
     $NombreZona="";
+    $NombreZonaCompleto="";
  //   $palabraZonaExtra="";
     $contadorBlackWord=0;
     $FraseInicial="";
@@ -71,6 +73,8 @@ for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
                                 if($trozos[$e] === 'de' or $trozos[$e] === 'en')
                                 {   
                                         $NombreZona =$NombreZona.",";
+                                        $NombreZonaCompleto =$NombreZonaCompleto." ";
+                                        $NombreZonaCompleto =$NombreZonaCompleto. $trozos[$e];
                                        // $NombreZona =$NombreZona. $trozos[$e];     
 
                                 }
@@ -78,6 +82,8 @@ for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
                                 {
                                     $NombreZona =$NombreZona." "; 
                                     $NombreZona =$NombreZona. $trozos[$e];
+                                    $NombreZonaCompleto = $NombreZonaCompleto." ";
+                                    $NombreZonaCompleto = $NombreZonaCompleto. $trozos[$e];
                                    // $NombreZona =$NombreZona." "; 
 
                                 }
@@ -116,6 +122,7 @@ $NombreZona=trim($NombreZona);
 //return $NombreZona;
 
 return array(    'FraseFinal' => $NombreZona,
+                 'FraseFinalCompleta' => $NombreZonaCompleto,   
                  'FraseInicial' => $FraseInicial);
 
 }
@@ -1117,6 +1124,7 @@ try {
    // $palabrafinal =obtenerNombreZona($search_term);
       $array = obtenerNombreZona($search_term); 
         $FraseFinal = trim($array['FraseFinal']);
+        $FraseFinalCompleta = trim($array['FraseFinalCompleta']);
         $FraseInicial = trim($array['FraseInicial']);
 
  //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
@@ -1527,8 +1535,8 @@ $palabrafinal=trim($NombreZona);
                 
                 
                 if ($TerminoEncontrado == 1) {
-                   //    $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
-                  //     mysql_query($sql_insertrecord);
+                     // $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
+                     //  mysql_query($sql_insertrecord);
 
                     
                     
@@ -1560,14 +1568,21 @@ $palabrafinal=trim($NombreZona);
                     if ($numeroTrozos > 1)
                     {
                     
-                       $resultPalabrafinal=PalabraDistritosPoblados($FraseFinal);  //comprueba si la ultima plabra concuerda con algun poblado 
+                       $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba si la ultima plabra concuerda con algun poblado 
 
-                      //  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
-                     //  mysql_query($sql_insertrecord);
+                       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinalCompleta . "'";
+                       mysql_query($sql_insertrecord);
+
+                       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $resultPalabrafinal . "'";
+                       mysql_query($sql_insertrecord);
+
 
 
                        if ($resultPalabrafinal===false)
-                             $resultPalabrafinal = comprobarUltimaPalabra($FraseFinal);  
+                             $resultPalabrafinal = comprobarUltimaPalabra($FraseFinal);
+                        else
+                            $FraseFinal=$FraseFinalCompleta;
+                                   
                         
                     }
                       else
@@ -1598,6 +1613,11 @@ $palabrafinal=trim($NombreZona);
 
                     if ($resultPalabrafinal === true) {
                         
+
+                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
+                       mysql_query($sql_insertrecord);
+
+
                     //    $search_termCortado = str_ireplace($palabrafinal, "", $search_term); // Crea una variable eliminando el nombre del poblado 
 
                  //       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola!!!!'";
@@ -1641,7 +1661,7 @@ $palabrafinal=trim($NombreZona);
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
                             FROM navigar_fetch_xmldata 
                              where  Match(label) AGAINST ('" . $FraseInicial . "' )  and  Match(street) AGAINST ('" . $FraseFinal . "') ";
-
+                              $sql = $sql . " HAVING Score > 2" ;
 
 
                             $sql = $sql . " UNION";
@@ -1675,7 +1695,7 @@ $palabrafinal=trim($NombreZona);
                         
                      //   $sql = $sql . "  ORDER BY Score DESC limit 0,40";
 
-                         $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY Score desc limit 0,15";
+                         $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 2)  ORDER BY Score desc  limit 0,25";
 
 
                          
@@ -1725,8 +1745,8 @@ $palabrafinal=trim($NombreZona);
 
                          $res = mysql_query($sql);
                     
-                         while($row[] = mysql_fetch_assoc($res));
-                         mysql_free_result($res)
+                     //  while($row[] = mysql_fetch_assoc($res));
+                   
                          
 
                         $num = mysql_num_rows($res);
@@ -1936,6 +1956,8 @@ $palabrafinal=trim($NombreZona);
                     if ($num > 0) {
                         
                         
+
+
                         
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -1994,7 +2016,13 @@ $palabrafinal=trim($NombreZona);
                             
                             $x++;
                         }
-                        
+
+                      
+                       //   ORDENA POR DISTANCIA
+                            usort($data, function($a, $b) {
+                                return $a['distance'] - $b['distance'];
+                            });
+
                         $return = array(
                             
                             'error' => 0,
@@ -2211,6 +2239,9 @@ $palabrafinal=trim($NombreZona);
                     
                     
                     if ($num > 0) {
+
+
+
                         
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -2273,9 +2304,7 @@ $palabrafinal=trim($NombreZona);
                             $data[$x]['phone'] = $row->phone;
                             
                             $data[$x]['rating'] = $row->rating;
-                            
-                            
-                            
+                        
                             $data[$x]['distance'] = $row->distance;
                             
                             
@@ -2284,6 +2313,10 @@ $palabrafinal=trim($NombreZona);
                             
                         }
                         
+                       
+                      
+
+
                         $return = array(
                             
                             'error' => 0,
