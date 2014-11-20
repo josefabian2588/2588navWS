@@ -22,6 +22,105 @@ bsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
     return utf8_encode($cadena);
 }
 
+
+
+
+function obtenerNombreZona($cadena)
+{
+   /*
+*************************
+*   VERIFICA SI TIENE LA PALABRA "DE" O "EN"
+*************************
+*/
+
+        
+$trozos = explode(" ", $cadena);    
+
+if(count($trozos)>=1) {
+
+    $NombreZona="";
+ //   $palabraZonaExtra="";
+    $contadorBlackWord=0;
+    $FraseInicial="";
+            
+
+
+for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
+
+
+    if($trozos[$i] === 'de' or $trozos[$i] === 'en')
+      {
+          //  $ZonaActivada=true;
+         //   if($LimiteNombreZona==0){  // 0 , primera vez que encuentra "de"  o "en" 
+                
+               if($contadorBlackWord===0){
+                
+                      $contadorBlackWord=1;
+
+                     for($e=$i; $e<count($trozos); $e++)
+                     {       
+                          
+                          if($contadorBlackWord===1){
+
+                                //$NombreZona =$NombreZona. $trozos[$e+1]; 
+                                $contadorBlackWord++;
+
+                          }
+                          else{ //if($contadorBlackWord>1)
+
+                                if($trozos[$e] === 'de' or $trozos[$e] === 'en')
+                                {   
+                                        $NombreZona =$NombreZona.",";
+                                       // $NombreZona =$NombreZona. $trozos[$e];     
+
+                                }
+                                else
+                                {
+                                    $NombreZona =$NombreZona." "; 
+                                    $NombreZona =$NombreZona. $trozos[$e];
+                                   // $NombreZona =$NombreZona." "; 
+
+                                }
+
+                          }
+
+    
+
+                     } //FIN for($e=$i; $e<count($trozos); $e++)
+
+                 } //if($contadorBlackWord===0){     
+
+             }  // FIN if($trozos[$i] === 'de' or $trozos[$i] === 'en')
+
+             else{
+
+                     if($contadorBlackWord===0){
+
+                         $FraseInicial=$FraseInicial. $trozos[$i];
+                         $FraseInicial =$FraseInicial." "; 
+                     }
+             }
+             
+     // }
+
+   }
+
+//$search_term = EliminarPalabrasComunesExtras($search_term);
+$NombreZona = EliminarPalabrasComunesExtras($NombreZona);
+$NombreZona=trim($NombreZona);
+// $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
+//  mysql_query($sql_insertrecord);
+
+    }
+
+//return $NombreZona;
+
+return array(    'FraseFinal' => $NombreZona,
+                 'FraseInicial' => $FraseInicial);
+
+}
+
+
 function EliminarPalabrasComunes($cadena)
 {
     
@@ -612,13 +711,16 @@ function ObtenerTerminosDirectorio()
     return $ArregloTermino;
 }
 
+
+/*  SEGUNDO METODO PARA BUSCAR UN POBLADO */
 function comprobarUltimaPalabra($palabrafinal)
 {
+    trim($palabrafinal);
     $result          = false;
-    $sqlpalabrafinal = "SELECT distinct street, Match(street) AGAINST ('" . $palabrafinal . "')  as Score FROM  navigar_fetch_xmldata where Match(street) AGAINST ('" . $palabrafinal . "') ORDER BY Score DESC  limit 0,3";
-    $resFilaCity     = mysql_query($sqlpalabrafinal);
+    $sqlpalabrafinal = "SELECT distinct street, Match(street) AGAINST ('" . $palabrafinal . "')  as Score FROM  navigar_fetch_xmldata where Match(street) AGAINST ('" . $palabrafinal . "') ORDER BY Score DESC  limit 0,2";
+    $resulFilaStreet     = mysql_query($sqlpalabrafinal);
     
-    if (mysql_num_rows($resFilaCity) > 0) // verifica que existe algun city que concuerde 
+    if (mysql_num_rows($resulFilaStreet) > 0) // verifica que existe algun city que concuerde 
         {
         
         $result = true;
@@ -631,30 +733,6 @@ function comprobarUltimaPalabra($palabrafinal)
 
 
 
-
-function createRouteGeometry($mainArray)
-{
-    $routes = array();
-    foreach ($mainArray['route_geometry'] as $routeDirectory) {
-        $routes[] = implode(",", $routeDirectory);
-    }
-    return $routes;
-}
-
-function generatePolyline($mainArray, $currentIndex)
-{
-    $startindex = $mainArray['route_instructions'][$currentIndex]['2'];
-    if (isset($mainArray['route_instructions'][($currentIndex + 1)])) {
-        $endIndex = $mainArray['route_instructions'][$currentIndex + 1]['2'];
-    } else {
-        $total    = count($mainArray['route_geometry']);
-        $endIndex = ($total - 1);
-    }
-    for ($i = $startindex; $i <= $endIndex; $i++) {
-        $routeGemetry[$i] = $mainArray['route_geometry'][$i];
-    }
-    return Polyline::Encode($routeGemetry);
-}
 
 error_reporting(0);
 
@@ -843,280 +921,7 @@ function decodePolylineToArray($encoded)
     
 }
 
-function xml2array($contents, $get_attributes = 1, $priority = 'tag')
-{
-    
-    if (!$contents)
-        return array();
-    
-    
-    
-    if (!function_exists('xml_parser_create')) {
-        
-        //print "'xml_parser_create()' function not found!";
-        
-        return array();
-        
-    }
-    
-    
-    
-    //Get the XML parser of PHP - PHP must have this module for the parser to work
-    
-    $parser = xml_parser_create('');
-    
-    xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, "UTF-8"); # http://minutillo.com/steve/weblog/2004/6/17/php-xml-and-character-encodings-a-tale-of-sadness-rage-and-data-loss
-    
-    xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-    
-    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
-    
-    xml_parse_into_struct($parser, trim($contents), $xml_values);
-    
-    xml_parser_free($parser);
-    
-    
-    
-    if (!$xml_values)
-        return; //Hmm...
-    
-    
-    
-    //Initializations
-    
-    $xml_array = array();
-    
-    $parents = array();
-    
-    $opened_tags = array();
-    
-    $arr = array();
-    
-    
-    
-    $current =& $xml_array; //Refference
-    
-    
-    
-    //Go through the tags.
-    
-    $repeated_tag_index = array(); //Multiple tags with same name will be turned into an array
-    
-    foreach ($xml_values as $data) {
-        
-        unset($attributes, $value); //Remove existing values, or there will be trouble
-        
-        
-        
-        //This command will extract these variables into the foreach scope
-        
-        // tag(string), type(string), level(int), attributes(array).
-        
-        extract($data); //We could use the array by itself, but this cooler.
-        
-        
-        
-        $result = array();
-        
-        $attributes_data = array();
-        
-        
-        
-        if (isset($value)) {
-            
-            if ($priority == 'tag')
-                $result = $value;
-            
-            else
-                $result['value'] = $value; //Put the value in a assoc array if we are in the 'Attribute' mode
-            
-        }
-        
-        
-        
-        //Set the attributes too.
-        
-        if (isset($attributes) and $get_attributes) {
-            
-            foreach ($attributes as $attr => $val) {
-                
-                if ($priority == 'tag')
-                    $attributes_data[$attr] = $val;
-                
-                else
-                    $result['attr'][$attr] = $val; //Set all the attributes in a array called 'attr'
-                
-            }
-            
-        }
-        
-        
-        
-        //See tag status and do the needed.
-        
-        if ($type == "open") { //The starting of the tag '<tag>'
-            
-            $parent[$level - 1] =& $current;
-            
-            if (!is_array($current) or (!in_array($tag, array_keys($current)))) { //Insert New tag
-                
-                $current[$tag] = $result;
-                
-                if ($attributes_data)
-                    $current[$tag . '_attr'] = $attributes_data;
-                
-                $repeated_tag_index[$tag . '_' . $level] = 1;
-                
-                
-                
-                $current =& $current[$tag];
-                
-                
-                
-            } else { //There was another element with the same tag name
-                
-                
-                
-                if (isset($current[$tag][0])) { //If there is a 0th element it is already an array
-                    
-                    $current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
-                    
-                    $repeated_tag_index[$tag . '_' . $level]++;
-                    
-                } else { //This section will make the value an array if multiple tags with the same name appear together
-                    
-                    $current[$tag] = array(
-                        $current[$tag],
-                        $result
-                    ); //This will combine the existing item and the new item together to make an array
-                    
-                    $repeated_tag_index[$tag . '_' . $level] = 2;
-                    
-                    
-                    
-                    if (isset($current[$tag . '_attr'])) { //The attribute of the last(0th) tag must be moved as well
-                        
-                        $current[$tag]['0_attr'] = $current[$tag . '_attr'];
-                        
-                        unset($current[$tag . '_attr']);
-                        
-                    }
-                    
-                    
-                    
-                }
-                
-                $last_item_index = $repeated_tag_index[$tag . '_' . $level] - 1;
-                
-                $current =& $current[$tag][$last_item_index];
-                
-            }
-            
-            
-            
-        } elseif ($type == "complete") { //Tags that ends in 1 line '<tag />'
-            
-            //See if the key is already taken.
-            
-            if (!isset($current[$tag])) { //New Key
-                
-                $current[$tag] = $result;
-                
-                $repeated_tag_index[$tag . '_' . $level] = 1;
-                
-                if ($priority == 'tag' and $attributes_data)
-                    $current[$tag . '_attr'] = $attributes_data;
-                
-                
-                
-                
-                
-                
-                
-                
-                
-            } else { //If taken, put all things inside a list(array)
-                
-                if (isset($current[$tag][0]) and is_array($current[$tag])) { //If it is already an array...
-                    
-                    
-                    
-                    // ...push the new element into that array.
-                    
-                    $current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
-                    
-                    
-                    
-                    if ($priority == 'tag' and $get_attributes and $attributes_data) {
-                        
-                        $current[$tag][$repeated_tag_index[$tag . '_' . $level] . '_attr'] = $attributes_data;
-                        
-                    }
-                    
-                    $repeated_tag_index[$tag . '_' . $level]++;
-                    
-                    
-                    
-                } else { //If it is not an array...
-                    
-                    $current[$tag] = array(
-                        $current[$tag],
-                        $result
-                    ); //...Make it an array using using the existing value and the new value
-                    
-                    $repeated_tag_index[$tag . '_' . $level] = 1;
-                    
-                    if ($priority == 'tag' and $get_attributes) {
-                        
-                        if (isset($current[$tag . '_attr'])) { //The attribute of the last(0th) tag must be moved as well
-                            
-                            
-                            
-                            $current[$tag]['0_attr'] = $current[$tag . '_attr'];
-                            
-                            unset($current[$tag . '_attr']);
-                            
-                        }
-                        
-                        
-                        
-                        if ($attributes_data) {
-                            
-                            $current[$tag][$repeated_tag_index[$tag . '_' . $level] . '_attr'] = $attributes_data;
-                            
-                        }
-                        
-                    }
-                    
-                    $repeated_tag_index[$tag . '_' . $level]++; //0 and 1 index is already taken
-                    
-                }
-                
-            }
-            
-            
-            
-        } elseif ($type == 'close') { //End of tag '</tag>'
-            
-            $current =& $parent[$level - 1];
-            
-        }
-        
-    }
-    
-    
-    
-    return ($xml_array);
-    
-}
 
-
-
-/*require_once ROOT_PATH . DS . 'wp-load.php';
-
-require_once ROOT_PATH . DS . 'webservices' . DS . 'libs' . DS . 'functions' . DS . 'function.php';
-
-require_once ROOT_PATH . DS . 'webservices' . DS . 'libs' . DS . 'htmlpurify' . DS . 'library' . DS . 'HTMLPurifier.auto.php';*/
 
 
 
@@ -1126,450 +931,10 @@ try {
     
     switch ($action) {
         
-        case 'getallData':
-            
-            foreach ($_REQUEST as $key => $val) {
-                
-                $_REQUEST[$key] = strtolower($val);
-                
-            }
-            
-            
-            
-            $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '9.954376');
-            
-            $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '-84.127636');
-            
-            
-            
-            $location = $latitude . ',' . $longitude;
-            
-            //$location = ((isset($_REQUEST['location'])) ? $_REQUEST['location'] : '-33.8670522,151.1957362');
-            
-            $distance = ((isset($_REQUEST['distance'])) ? $_REQUEST['distance'] : 500);
-            
-            $rankby = ((isset($_REQUEST['rankby'])) ? $_REQUEST['rankby'] : 'distance');
-            
-            $types = ((isset($_REQUEST['types'])) ? $_REQUEST['types'] : 'food');
-            
-            $sensor = ((isset($_REQUEST['sensor'])) ? $_REQUEST['sensor'] : 'false');
-            
-            $key = ((isset($_REQUEST['key'])) ? $_REQUEST['key'] : 'AIzaSyCUNEgXFYxE3IzHKveGclIlCgDe6esSeWU');
-            
-            $subtype = ((isset($_REQUEST['subtype'])) ? $_REQUEST['subtype'] : '');
-            
-            
-            
-            
-            
-            
-            
-            if ($latitude != '' && $longitude != '' && $rankby != '' && $types != '' && $sensor != '' && $key != '') {
-                
-                
-                
-                if (is_numeric($types)) {
-                    
-                    
-                    
-                    $sqltype = "select * from navigar_poitype where id='" . $types . "'";
-                    
-                    $restype = mysql_query($sqltype);
-                    
-                    $rowtype = mysql_fetch_assoc($restype);
-                    
-                    if (!empty($rowtype['name'])) {
-                        
-                        
-                        
-                        $nametypes = $rowtype['name'];
-                        
-                    } else {
-                        
-                        throw new Exception("poitype is not correct");
-                        
-                        
-                        
-                        
-                        
-                    }
-                    
-                    
-                    
-                } else {
-                    
-                    $nametypes = $types;
-                    
-                    
-                    
-                }
-                
-                
-                
-                
-                
-                $url = base64_decode(APPPLACE) . 'nearbysearch/json?location=' . $location . '&radius=' . $distance . '&types=' . $nametypes . '&sensor=' . $sensor . '&key=' . $key;
-                
-                
-                
-                //echo $url;
-                
-                $data_all = json_decode(file_get_contents($url));
-                
-                //echo '<pre>';
-                
-                //print_r($data_all->results);
-                
-                //echo '</pre>';
-                
-                $x = 0;
-                
-                $data = array();
-                
-                foreach ($data_all->results as $mydata) {
-                    
-                    //print_r($mydata) ;
-                    
-                    //echo $mydata->geometry->location->lat.'<br>';
-                    
-                    $data[$x]['latitude'] = $mydata->geometry->location->lat;
-                    
-                    $data[$x]['longitude'] = $mydata->geometry->location->lng;
-                    
-                    $data[$x]['name'] = $mydata->name;
-                    
-                    $data[$x]['types'] = $mydata->types;
-                    
-                    $data[$x]['vicinity'] = $mydata->vicinity;
-                    
-                    $data[$x]['icon'] = $mydata->icon;
-                    
-                    if (!empty($mydata->rating)) {
-                        
-                        $data[$x]['rating'] = $mydata->rating;
-                        
-                    } else {
-                        
-                        $data[$x]['rating'] = 0;
-                        
-                    }
-                    
-                    $valdistance = distance($latitude, $longitude, $mydata->geometry->location->lat, $mydata->geometry->location->lng, $miles = true);
-                    
-                    
-                    
-                    $valdistancetwo = $valdistance * 1000;
-                    
-                    $vnew = number_format($valdistancetwo, 1);
-                    
-                    $data[$x]['distance'] = $vnew;
-                    
-                    
-                    
-                    $x++;
-                    
-                }
-                
-                /*echo '<pre>';
-                
-                //print_r($data_all->results);
-                
-                
-                
-                print_r($data);echo '</pre>';
-                
-                exit();*/
-                
-                
-                
-                if (is_numeric($types)) {
-                    
-                    $tabletypes = $types;
-                    
-                } else {
-                    
-                    $sqltype = "select * from navigar_poitype where name='" . $types . "'";
-                    
-                    $restype = mysql_query($sqltype);
-                    
-                    $numtype = mysql_num_rows($restype);
-                    
-                    if ($numtype > 0) {
-                        
-                        $rowtype = mysql_fetch_array($restype);
-                        
-                        $tabletypes = $rowtype['id'];
-                        
-                    } else {
-                        
-                        
-                        
-                        throw new Exception("poitype is not correct");
-                        
-                    }
-                    
-                }
-                
-                
-                
-                if ($subtype == '') {
-                    
-                    $subtypequery = '';
-                    
-                } else {
-                    
-                    $subtypequery = " and subtype='" . strtolower($subtype) . "'";
-                    
-                }
-                
-                $sql = "SELECT t1.*,t2.name as `type`,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=t1.id )as rating,  ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( t1.latitude) ) * cos( radians(t1.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) * sin( radians(t1.latitude)))) AS distance FROM navigar_poi as t1
-
-inner join navigar_poitype as t2 on t2.id=t1.poi_type
-
- WHERE poi_type='" . $tabletypes . "' " . $subtypequery . " HAVING distance < '" . $distance . "'";
-                
-                
-                
-                //echo $sql;
-                
-                $res = mysql_query($sql);
-                
-                $num = mysql_num_rows($res);
-                
-                if ($num > 0) {
-                    
-                    while ($row = mysql_fetch_object($res)) {
-                        
-                        
-                        
-                        $data[$x]['id'] = $row->id;
-                        
-                        $data[$x]['latitude'] = $row->latitude;
-                        
-                        $data[$x]['longitude'] = $row->longitude;
-                        
-                        $data[$x]['name'] = $row->poi_name;
-                        
-                        $data[$x]['types'] = array(
-                            $row->type
-                        );
-                        
-                        $data[$x]['icon'] = '';
-                        
-                        $data[$x]['vicinity'] = '';
-                        
-                        if ($row->rating != 0) {
-                            
-                            $data[$x]['rating'] = number_format($row->rating, 2);
-                            
-                        } else {
-                            
-                            $data[$x]['rating'] = 0;
-                            
-                        }
-                        
-                        $valdist = $row->distance;
-                        
-                        $vnewsecond = number_format($valdist, 1);
-                        
-                        $data[$x]['distance'] = $vnewsecond;
-                        
-                        $data[$x]['subtype'] = $row->subtype;
-                        
-                        
-                        
-                        $x++;
-                        
-                    }
-                    
-                }
-                
-                /*echo '<pre>';
-                
-                print_r($data);
-                
-                echo '</pre>';
-                
-                exit;*/
-                
-                $return = array(
-                    
-                    'error' => 0,
-                    
-                    'posts' => $data
-                    
-                    
-                    
-                );
-                
-            } else {
-                
-                $return = array(
-                    
-                    'error' => 0,
-                    
-                    'msg' => 'fields can not be null',
-                    
-                    'posts' => ''
-                    
-                    
-                    
-                    
-                    
-                );
-                
-            }
-            
-            break;
+       
         
         
-        case 'getAddressByName':
-            $_address = $_REQUEST["address"];
-            $url1     = "http://maps.google.com/maps/api/geocode/json?address=" . urlencode($_address) . "&sensor=false";
-            $ch       = curl_init($url1);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $_jsonData = curl_exec($ch);
-            curl_close($ch);
-            $return = json_decode($_jsonData, true);
-            break;
-        
-        
-        case 'addPOI':
-            
-            
-            
-            $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '');
-            
-            $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '');
-            
-            $name = ((isset($_REQUEST['name'])) ? $_REQUEST['name'] : '');
-            
-            $poitype = ((isset($_REQUEST['poitype'])) ? $_REQUEST['poitype'] : '');
-            
-            $subtype = ((isset($_REQUEST['subtype'])) ? $_REQUEST['subtype'] : '');
-            
-            /*$latitude = $_REQUEST['latitude'];
-            
-            $longitude = $_REQUEST['longitude'];
-            
-            $name = $_REQUEST['name'];
-            
-            $poitype = $_REQUEST['poitype'];*/
-            
-            if ($latitude != '' && $longitude != '' && $name != '' && $poitype != '') {
-                
-                
-                
-                if (is_numeric($poitype)) {
-                    
-                    
-                    
-                    $intpoitype = $poitype;
-                    
-                    
-                    
-                } else {
-                    
-                    $poiname = strtolower($poitype);
-                    
-                    $sqlselect = "select id from navigar_poitype where `name`='" . $poiname . "'";
-                    
-                    $resselect = mysql_query($sqlselect);
-                    
-                    $numselect = mysql_num_rows($resselect);
-                    
-                    if ($numselect > 0) {
-                        
-                        $rowselect = mysql_fetch_array($resselect);
-                        
-                        
-                        
-                        //exit();
-                        
-                        
-                        
-                        //throw new Exception("this poi type is exists in database");
-                        
-                        $intpoitype = $rowselect['id'];
-                        
-                    } else {
-                        
-                        
-                        
-                        $sqlint = "insert into navigar_poitype set `name` = '" . $poiname . "'";
-                        
-                        
-                        
-                        $resint = mysql_query($sqlint);
-                        
-                        
-                        
-                        $intpoitype = mysql_insert_id();
-                        
-                    }
-                    
-                    
-                    
-                }
-                
-                
-                
-                $sql = "insert into navigar_poi (`latitude`,`longitude`,`poi_name`,`poi_type`,`subtype`) values('" . $latitude . "','" . $longitude . "','" . $name . "','" . $intpoitype . "','" . $subtype . "')";
-                
-                
-                
-                $res = mysql_query($sql);
-                
-                
-                
-                $last_insert_id = mysql_insert_id();
-                
-                if ($last_insert_id) {
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'msg' => 'inserted successully'
-                        
-                    );
-                    
-                } else {
-                    
-                    $return = array(
-                        
-                        'error' => 1,
-                        
-                        'msg' => 'error in insert'
-                        
-                    );
-                    
-                }
-                
-                
-                
-                
-                
-            } else {
-                
-                $return = array(
-                    
-                    'error' => 1,
-                    
-                    'msg' => 'fields can not be null'
-                    
-                );
-                
-                
-                
-            }
-            
-            
-            
-            break;
-        
-        
+   
         
         case 'listpoiType':
             
@@ -1601,6 +966,11 @@ inner join navigar_poitype as t2 on t2.id=t1.poi_type
             
             break;
         
+
+
+
+
+
         case 'addReview':
             
             
@@ -1677,12 +1047,12 @@ inner join navigar_poitype as t2 on t2.id=t1.poi_type
             }
             
             
-            
-            
-            
-            
-            
+
             break;
+
+
+
+
         
         case 'getReview':
             
@@ -1718,217 +1088,6 @@ inner join navigar_poitype as t2 on t2.id=t1.poi_type
             
             break;
         
-        case 'addEvent':
-            
-            
-            
-            $c_latitude = ((isset($_REQUEST['c_latitude'])) ? $_REQUEST['c_latitude'] : '');
-            
-            $c_longitude = ((isset($_REQUEST['c_longitude'])) ? $_REQUEST['c_longitude'] : '');
-            
-            $event_type = ((isset($_REQUEST['event_type'])) ? $_REQUEST['event_type'] : '');
-            
-            $description = ((isset($_REQUEST['description'])) ? $_REQUEST['description'] : '');
-            
-            
-            
-            if ($c_latitude != '' && $c_longitude != '' && $event_type != '') {
-                
-                
-                
-                $desc_new = mysql_escape_string($description);
-                
-                //$day=date('Y-m-d h:i:s');
-                
-                
-                
-                $sql = "insert into navigar_events (`latitude`,`longitude`,`event_type`,`description`, `added_date`) values('" . $c_latitude . "','" . $c_longitude . "','" . $event_type . "','" . $desc_new . "', '" . time() . "')";
-                
-                
-                
-                
-                
-                $res = mysql_query($sql);
-                
-                
-                
-                $last_insert_id = mysql_insert_id();
-                
-                if ($last_insert_id) {
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'msg' => 'inserted successully'
-                        
-                    );
-                    
-                } else {
-                    
-                    $return = array(
-                        
-                        'error' => 1,
-                        
-                        'msg' => 'error in insert'
-                        
-                    );
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-            } else {
-                
-                throw new Exception("fields can not be null");
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            break;
-        
-        case 'viewRoadEvents':
-            
-            
-            
-            $c_latitude = ((isset($_REQUEST['c_latitude'])) ? $_REQUEST['c_latitude'] : '');
-            
-            $c_longitude = ((isset($_REQUEST['c_longitude'])) ? $_REQUEST['c_longitude'] : '');
-            
-            $distance = ((isset($_REQUEST['distance'])) ? $_REQUEST['distance'] : '');
-            
-            
-            
-            
-            
-            
-            
-            if ($c_latitude != '' && $c_longitude != '' && $distance != '') {
-                
-                
-                
-                
-                
-                $sql = "insert into navigar_events (`latitude`,`longitude`,`event_type`,`description`) values(,'" . $c_longitude . "','" . $event_type . "','" . $description . "')";
-                
-                
-                
-                $mktime_threehours = mktime(date("G") - 3, date("i"), date("s"), date("n"), date("j"), date("Y"));
-                
-                
-                
-                
-                
-                $sql = "SELECT 
-
-  *, 
-
-   ( 6371000 * acos( cos( radians('" . $c_latitude . "') ) * cos( radians( navigar_events.latitude ) ) 
-
-   * cos( radians(navigar_events.longitude) - radians('" . $c_longitude . "')) + sin(radians('" . $c_latitude . "')) 
-
-   * sin( radians(navigar_events.latitude)))) AS distance 
-
-FROM navigar_events WHERE added_date BETWEEN " . $mktime_threehours . " AND " . time() . " 
-
-HAVING distance < '" . $distance . "' 
-
-ORDER BY distance";
-                
-                
-                
-                $res = mysql_query($sql);
-                
-                
-                
-                $x = 0;
-                
-                $data = array();
-                
-                $num = mysql_num_rows($res);
-                
-                
-                
-                if ($num > 0) {
-                    
-                    while ($row = mysql_fetch_object($res)) {
-                        
-                        
-                        
-                        $data[$x]['id'] = $row->id;
-                        
-                        $data[$x]['latitude'] = $row->latitude;
-                        
-                        $data[$x]['longitude'] = $row->longitude;
-                        
-                        $data[$x]['event_type'] = $row->event_type;
-                        
-                        $data[$x]['description'] = $row->description;
-                        
-                        
-                        
-                        $data[$x]['distance'] = $row->distance;
-                        
-                        
-                        
-                        $x++;
-                        
-                    }
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'posts' => $data
-                        
-                        
-                        
-                    );
-                    
-                }
-                
-                else {
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'posts' => 'No result'
-                        
-                        
-                        
-                    );
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-            } else {
-                
-                throw new Exception("fields can not be null");
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            break;
         
         case 'spellSearch':
             
@@ -1937,37 +1096,56 @@ ORDER BY distance";
             $search_term = normaliza($search_term);
             $search_term=trim($search_term);
             $search_termIntacto=$search_term; /* valor ingresado por el usuario como auxiliar */
-            $search_term = EliminarPalabrasComunes($search_term);
+            $search_term = EliminarPalabrasComunes($search_term); /*NO elimina "de" o "en"  */ 
            
             
-            //*** 09-4-14 insertar el registro de la busqueda 
-            
-            //  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
-            //  mysql_query($sql_insertrecord);
-            
-            //  }
+       
             
 
-            
+
+/*
+*************************
+*   VERIFICA SI TIENE LA PALABRA "DE" O "EN"
+*************************
+*/
+
+
+//$trozos = explode(" ", $search_term);    
+
+//if(count($trozos)>1) {
+
+   // $palabrafinal =obtenerNombreZona($search_term);
+      $array = obtenerNombreZona($search_term); 
+        $FraseFinal = trim($array['FraseFinal']);
+        $FraseInicial = trim($array['FraseInicial']);
+
+ //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
+//    mysql_query($sql_insertrecord);
+
+//}
+
+
+/*
+        
 $trozos = explode(" ", $search_term);    
 
-if(1<count($trozos)){
+if(count($trozos)>1) {
 
     $NombreZona="";
-
-    //$ZonaActivada=false;
-           
-
-//Recorro todos los elementos
     $palabraZonaExtra="";
     $contadorZonaAUX=0;
+            
+
+
+
+//Recorro todos los elementos
 for($i=1;$i<=count($trozos);$i++) {
 
 
-    if($trozos[$i] =='de' or $trozos[$i] =='en')
+    if($trozos[$i] === 'de' or $trozos[$i] === 'en')
       {
           //  $ZonaActivada=true;
-            if($LimiteNombreZona==0){  /* 0 , primera vez que encuentra "de"  o "en" */
+            if($LimiteNombreZona==0){  // 0 , primera vez que encuentra "de"  o "en" 
                 
                if($contadorZonaAUX==0){
                      for($e=$i; $e<count($trozos); $e++)
@@ -1975,11 +1153,12 @@ for($i=1;$i<=count($trozos);$i++) {
                         $NombreZona =$NombreZona. $trozos[$e+1];
                         $NombreZona =$NombreZona." ";  
                         $contadorZonaAUX++;
+
                      }
                   }      
 
-                }  /* 1 , segunda o + vez que encuentra "de"  o "en" */
-                
+                }  // 1 , segunda o + vez que encuentra "de"  o "en" 
+
       }
 
    }
@@ -1987,11 +1166,11 @@ for($i=1;$i<=count($trozos);$i++) {
 $search_term = EliminarPalabrasComunesExtras($search_term);
 $NombreZona = EliminarPalabrasComunesExtras($NombreZona);
 $palabrafinal=trim($NombreZona);
-  // $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
-  // mysql_query($sql_insertrecord);
+  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $NombreZona . "'";
+  mysql_query($sql_insertrecord);
 
 }
-
+*/
 
 
 
@@ -2149,6 +1328,8 @@ $palabrafinal=trim($NombreZona);
                 
                 //exit();
                 
+                   
+
                 foreach ($data_all->results as $mydata) {
                     
                     //echo 'arka';
@@ -2191,6 +1372,8 @@ $palabrafinal=trim($NombreZona);
                     
                     //exit();
                     
+
+                   
                     $sql = "select id,google_id from  navigar_fetch_xmldata where google_id='" . $mydata->id . "'";
                     
                     $res = mysql_query($sql);
@@ -2214,9 +1397,18 @@ $palabrafinal=trim($NombreZona);
                         }
                         
                     }
+                   
                 }
                 
                 
+
+
+
+
+
+
+
+
                 // ******************************************  
                 // Busquedas por terminos , Directorio     
                 //  *******************************************  
@@ -2225,27 +1417,32 @@ $palabrafinal=trim($NombreZona);
                 
                 $TerminoEncontrado = 0;
                 $coincidencia      = 0;
-                $search_term=trim($search_term);
+                trim($search_term);
                 
                 
                 
                 $trozos         = explode(" ", $search_term);
-                $numero         = count($trozos);
-                $palabraInicial = $trozos[0];
-                
+                $numeroTrozos   = count($trozos);
+                $numero         = count($trozos); //pendiente por eliminar numero
+            //    $palabraInicial = $trozos[0];
+                $palabraInicial = $FraseInicial; //pendiente por eliminar palabraInicial
+                $palabrafinal = $FraseFinal;  //pendiente por eliminar palabraFinal
 
-                 /* BUSQUEDA DE TERMINOS PARA TERMINOS COMPUESTOS , USANDO  search_termIntacto  */
-
+                 /*****************
+                 /* BUSQUEDA DE TERMINOS PARA TERMINOS COMPUESTOS , USANDO  search_termIntacto  
+                 /*****************/
                 
-                   //YA  en memoria 
+                    
                      $ArregloTermino = ObtenerTerminosDirectorio();
 
                      
 
-                  //     $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_termIntacto . "'";
-                  //     mysql_query($sql_insertrecord);
+                   //    $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
+                    //   mysql_query($sql_insertrecord);
 
-                     foreach ($ArregloTermino as $obj_key => $termino) {
+
+
+                foreach ($ArregloTermino as $obj_key => $termino) {
                     
                     foreach ($termino as $key => $value) {
                         
@@ -2255,7 +1452,7 @@ $palabrafinal=trim($NombreZona);
                             break;
                         }
                         
-                        if ($value == $search_termIntacto) //encuentra una similitud
+                        if ($value === $search_termIntacto) //encuentra una similitud
                             $coincidencia = 1;
                     }
                     
@@ -2271,13 +1468,17 @@ $palabrafinal=trim($NombreZona);
 
 
 
+
                 
+                 /*****************
+                 /* BUSQUEDA DE TERMINOS  BASADO EN UNA PALABRA (PALABRA INICIAL)
+                 /*****************/
                 
-                 /* BUSQUEDA DE TERMINOS PARA TERMINOS BASADO EN UNA PALABRA  */
 
                 if ($TerminoEncontrado == 0) {
 
                // $ArregloTermino = ObtenerTerminosDirectorio();
+                
                 
                 foreach ($ArregloTermino as $obj_key => $termino) {
                     
@@ -2289,7 +1490,7 @@ $palabrafinal=trim($NombreZona);
                             break;
                         }
                         
-                        if ($value == $palabraInicial) //encuentra una similitud
+                        if ($value == $FraseInicial) //encuentra una similitud
                             $coincidencia = 1;
                     }
                     
@@ -2303,20 +1504,32 @@ $palabrafinal=trim($NombreZona);
                 }
 
 
-            }
+           }
 
+/*
 
+     $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $TerminoEncontrado . "'";
+                        mysql_query($sql_insertrecord);
+
+  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
+                        mysql_query($sql_insertrecord);
+
+   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
+                        mysql_query($sql_insertrecord);
+
+*/
 
                
 
-                
-                /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO */
-                
-                
+                 /*****************       
+                /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO 
+                /*****************/
                 
                 
                 if ($TerminoEncontrado == 1) {
-                    
+                   //    $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
+                  //     mysql_query($sql_insertrecord);
+
                     
                     
                     $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
@@ -2344,15 +1557,17 @@ $palabrafinal=trim($NombreZona);
                     // $num  = mysql_num_rows($res);
                     
                        
-                    if (count($trozos) > 1)
+                    if ($numeroTrozos > 1)
                     {
                     
-                       $resultPalabrafinal=PalabraDistritosPoblados($palabrafinal);   
+                       $resultPalabrafinal=PalabraDistritosPoblados($FraseFinal);  //comprueba si la ultima plabra concuerda con algun poblado 
 
-                     //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $palabrafinal . "'";
-                    //   mysql_query($sql_insertrecord);
-                       if ($resultPalabrafinal==false)
-                             $resultPalabrafinal = comprobarUltimaPalabra($palabrafinal);  
+                      //  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
+                     //  mysql_query($sql_insertrecord);
+
+
+                       if ($resultPalabrafinal===false)
+                             $resultPalabrafinal = comprobarUltimaPalabra($FraseFinal);  
                         
                     }
                       else
@@ -2373,14 +1588,20 @@ $palabrafinal=trim($NombreZona);
                     */
                     
                     
-                    
-                    /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN STREET   */
-                    if ($resultPalabrafinal == true) {
-                        
-                        $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
 
-                   //     $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_termCortado . "'";
-                   //     mysql_query($sql_insertrecord);
+
+                    /*********************
+                    /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN POBLADO   
+                    /***********************/
+
+
+
+                    if ($resultPalabrafinal === true) {
+                        
+                    //    $search_termCortado = str_ireplace($palabrafinal, "", $search_term); // Crea una variable eliminando el nombre del poblado 
+
+                 //       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola!!!!'";
+                  //     mysql_query($sql_insertrecord);
 
                         
                         
@@ -2401,31 +1622,40 @@ $palabrafinal=trim($NombreZona);
 
                             */
                             
-
-                                $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termCortado . "') as Score,
+                        /*
+                                $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicial . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
                             FROM navigar_fetch_xmldata 
-                             where  Match(label) AGAINST ('" . $search_termCortado . "' )  and  Match(street) AGAINST ('" . $palabrafinal . "') ";
+                             where  Match(label) AGAINST ('" . $FraseInicial . "' )  and  Match(street) AGAINST ('" . $FraseFinal . "') ";
                             
-                      
+*/
+
+
+                              $sql = "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinal . "') as Score,
+                                (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
+                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
+                            FROM navigar_fetch_xmldata 
+                             where  Match(label) AGAINST ('" . $FraseInicial . "' )  and  Match(street) AGAINST ('" . $FraseFinal . "') ";
 
 
 
-
-                            
                             $sql = $sql . " UNION";
 
+
+
                             
-                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $palabrafinal . "') as Score,
+                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinal . "') as Score,
                                     (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                     ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                                     * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
                                     FROM navigar_fetch_xmldata  
-                                    where Match(street) AGAINST ('" . $palabrafinal . "')  AND ( description = ";
+                                    where Match(street) AGAINST ('" . $FraseFinal . "')  AND ( description = ";
                             
                             foreach ($arraySubHexcode as $values) {
                                 
@@ -2445,7 +1675,7 @@ $palabrafinal=trim($NombreZona);
                         
                      //   $sql = $sql . "  ORDER BY Score DESC limit 0,40";
 
-                         $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
+                         $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY Score desc limit 0,15";
 
 
                          
@@ -2495,6 +1725,10 @@ $palabrafinal=trim($NombreZona);
 
                          $res = mysql_query($sql);
                     
+                         while($row[] = mysql_fetch_assoc($res));
+                         mysql_free_result($res)
+                         
+
                         $num = mysql_num_rows($res);
 
                          if ($num <= 0) {
@@ -2520,7 +1754,7 @@ $palabrafinal=trim($NombreZona);
                     /*  INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN STREET   */
                     else {
                         
-                        if ($numero == 1) {
+                        if ($numeroTrozos == 1) {
                             
                      
            //        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
@@ -2541,7 +1775,7 @@ $palabrafinal=trim($NombreZona);
                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
                             FROM navigar_fetch_xmldata  
-                            where  Match(label) AGAINST ('" . $search_term . "')  ";
+                            where  Match(label) AGAINST ('" . $FraseInicial . "')  ";
                                 
                                 
                                 
@@ -2633,7 +1867,7 @@ $palabrafinal=trim($NombreZona);
                                
                              */  
 
-/*
+
                                       $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_termIntacto . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
@@ -2643,12 +1877,15 @@ $palabrafinal=trim($NombreZona);
                              where  Match(label) AGAINST ('" . $search_termIntacto . "' ) ";
                             
                       
+
+
+
+
                             
                             $sql = $sql . " UNION";
-*/
-                             $sql ="";
-                             /*
-                            $sql = $sql . "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $search_termIntacto . "') as Score,
+
+                            
+                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $palabrafinal . "') as Score,
                                     (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                     ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
@@ -2656,14 +1893,6 @@ $palabrafinal=trim($NombreZona);
                                     FROM navigar_fetch_xmldata  
                                     where  description = ";
 
-*/
-                            $sql = $sql . " SELECT id,label,street,latitude,longitude,phone,
-                                    (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
-                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
-                                    FROM navigar_fetch_xmldata 
-                                     where description = ";
 
                                 foreach ($arraySubHexcode as $values) {
                                     
@@ -2681,8 +1910,8 @@ $palabrafinal=trim($NombreZona);
                                     
                                 }
                                 
-                                $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
-                               //    $sql = $sql . "ORDER BY Score DESC  limit 0,30";
+                              //  $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,40";
+                                   $sql = $sql . "ORDER BY Score DESC  limit 0,30";
                             }
 
 
@@ -2886,8 +2115,11 @@ $palabrafinal=trim($NombreZona);
                             /* la ultima palabra es un street */ 
                         if ($result == true) {
 
-                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
-              mysql_query($sql_insertrecord);
+
+                            // ACTIVAR NUEVAMENTE !!!!!!!!!!!!!!!!!
+
+                //         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
+                //         mysql_query($sql_insertrecord);
                             
                             $search_termCortado = str_ireplace($palabrafinal, "", $search_term);
                             
@@ -3448,84 +2680,7 @@ $palabrafinal=trim($NombreZona);
             break;
             
             
-            /*
-            case 'jsoninsert':
-            
-            
-            
-            $coordinates = serialize($_REQUEST['coordinates']);
-            
-            $c_longitude = ((isset($_REQUEST['current_logitude'])) ? $_REQUEST['current_logitude'] : '');
-            
-            $c_latitude = ((isset($_REQUEST['current_latitude'])) ? $_REQUEST['current_latitude'] : '');
-            
-            
-            
-            
-            
-            if ($c_latitude != '' && $c_longitude != '') {
-            
-            
-            
-            
-            
-            //$day=date('Y-m-d h:i:s');
-            
-            
-            
-            $sql = "insert into navigar_record_route (`latitude`,`longitude`,`all_coordinates`) values('" . $c_latitude . "','" . $c_longitude . "','" . $coordinates . "')";
-            
-            
-            
-            
-            
-            $res = mysql_query($sql);
-            
-            
-            
-            $last_insert_id = mysql_insert_id();
-            
-            if ($last_insert_id) {
-            
-            $return = array(
-            
-            'error' => 0,
-            
-            'msg' => 'inserted successully'
-            
-            );
-            
-            } else {
-            
-            $return = array(
-            
-            'error' => 1,
-            
-            'msg' => 'error in insert'
-            
-            );
-            
-            }
-            
-            
-            
-            
-            
-            
-            
-            } else {
-            
-            throw new Exception("fields can not be null");
-            
-            }
-            
-            
-            
-            */
-            
-            
-            
-            break;
+           
         
         case 'listMainCategory':
             
@@ -3630,6 +2785,8 @@ $palabrafinal=trim($NombreZona);
             }
             
             break;
+
+
         
         case 'getPOIPlaces':
             
@@ -4300,241 +3457,10 @@ $palabrafinal=trim($NombreZona);
             
             
             break;
-        
-        case "routeInsert":
-            
-            $road_name = $_REQUEST['road_name'];
-            
-            $sql_roadname = "insert into navigar_roadname set road_name='" . $road_name . "'";
-            
-            mysql_query($sql_roadname);
-            
-            $last_id = mysql_insert_id();
-            
-            
-            
-            $jsonContent = $_REQUEST["coordinates"];
-            
-            //print_r($jsonContent);
-            
-            /*$array = array("msg" => "Hello" .$jsonContent[0]["review_desc"]);
-            
-            echo json_encode($array);
-            
-            exit;*/
-            
-            //echo sizeof($jsonContent);
-            
-            for ($i = 0; $i < (sizeof($jsonContent)); $i++) {
-                
-                $sql_road_details = "insert into navigar_roadname_details set road_id=" . $last_id . ",latitude = '" . $jsonContent[$i]['latitude'] . "', longitude='" . $jsonContent[$i]['longitude'] . "'";
-                
-                mysql_query($sql_road_details);
-                
-            }
-            
-            $return = array(
-                
-                'error' => 0,
-                
-                'posts' => 'Records added successfully'
-                
-                
-                
-            );
-            
-            
-            
-            break;
-        
-        case 'getCostaricaPOI':
-            
-            
-            
-            $limit = ((isset($_REQUEST['limit'])) ? $_REQUEST['limit'] : '');
-            
-            
-            
-            $limitVal = '';
-            
-            if ($limit != '') {
-                
-                $limitVal = " LIMIT " . $limit;
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            $sql = "SELECT DISTINCT t1.id,t1.label,t1.street,t1.latitude,t1.longitude,IFNULL(t3.category_image,(select category_image from navigar_categorias where id='11')) as category_image from `navigar_fetch_xmldata` as t1 LEFT JOIN navigar_subcategorias as t2 ON t2.id=t1.typeHex LEFT JOIN navigar_categorias as t3 ON t3.id=t2.parent_id   where `country`='COSTA RICA'" . $limitVal;
-            
-            //echo $sql;
-            
-            
-            
-            
-            
-            $res = mysql_query($sql);
-            
-            
-            
-            
-            
-            $data = array();
-            
-            
-            
-            
-            
-            if ($res) {
-                
-                while ($row = mysql_fetch_object($res)) {
-                    
-                    
-                    
-                    $data[] = $row;
-                    
-                }
-                
-                
-                
-                $return = array(
-                    
-                    'error' => 0,
-                    
-                    'posts' => $data
-                    
-                    
-                    
-                );
-                
-            }
-            
-            else {
-                
-                $return = array(
-                    
-                    'error' => 0,
-                    
-                    'posts' => 'No result'
-                    
-                    
-                    
-                );
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            break;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        case 'addPOINEW_3':
-            
-            $latitude = ((isset($_REQUEST['latitude'])) ? $_REQUEST['latitude'] : '');
-            
-            $longitude = ((isset($_REQUEST['longitude'])) ? $_REQUEST['longitude'] : '');
-            
-            $title = ((isset($_REQUEST['title'])) ? $_REQUEST['title'] : '');
-            
-            $street = ((isset($_REQUEST['street'])) ? $_REQUEST['street'] : '');
-            
-            
-            
-            $main_category_id = ((isset($_REQUEST['main_category_id'])) ? $_REQUEST['main_category_id'] : '');
-            
-            $subcategory_name = ((isset($_REQUEST['subcategory_name'])) ? $_REQUEST['subcategory_name'] : '');
-            
-            
-            
-            if ($latitude != '' && $longitude != '' && $title != '' && $street != '') {
-                
-                $typeHex = rand(1000, 99999);
-                
-                $sql = "INSERT INTO navigar_subcategorias SET parent_id='" . $main_category_id . "', category_name='" . $subcategory_name . "', id='" . $typeHex . "' ";
-                
-                $subcatRes = mysql_query($sql);
-                
-                $subcat_id = mysql_insert_id($subcatRes);
-                
-                
-                
-                $sql = "insert into navigar_fetch_xmldata set 
 
-                `label` = '" . $title . "',
+        
+        
 
-                `comment` = '" . $description_new . "',
-
-                `street` = '" . $street . "',
-
-                `latitude` = '" . $latitude . "',
-
-                `typeHex` = '" . $typeHex . "',
-
-                `longitude` = '" . $longitude . "'";
-                
-                
-                
-                $res = mysql_query($sql);
-                
-                $last_insert_id = mysql_insert_id();
-                
-                if ($last_insert_id) {
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'msg' => 'inserted successully'
-                        
-                    );
-                    
-                } else {
-                    
-                    $return = array(
-                        
-                        'error' => 1,
-                        
-                        'msg' => 'error in insert'
-                        
-                    );
-                    
-                }
-                
-                
-                
-            }
-            
-            break;
-        
-        
-        
-        
-        
-        
-        
         
         
         case 'addPOINEW':
@@ -4718,569 +3644,12 @@ $palabrafinal=trim($NombreZona);
             
             
             break;
+
+
         
-        case 'getCameraAlert':
-            
-            
-            
-            $sql = "select * from `navigar_cameras_alert`";
-            
-            //echo $sql;
-            
-            
-            
-            
-            
-            $res = mysql_query($sql);
-            
-            
-            
-            
-            
-            $data = array();
-            
-            
-            
-            
-            
-            if ($res) {
-                
-                while ($row = mysql_fetch_object($res)) {
-                    
-                    
-                    
-                    $data[] = $row;
-                    
-                }
-                
-                
-                
-                $return = array(
-                    
-                    'error' => 0,
-                    
-                    'posts' => $data
-                    
-                    
-                    
-                );
-                
-            }
-            
-            else {
-                
-                $return = array(
-                    
-                    'error' => 0,
-                    
-                    'posts' => 'No result'
-                    
-                    
-                    
-                );
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            break;
+      
         
-        case 'getRouteForTwoPoint':
-            
-            
-            
-            $start = ((isset($_REQUEST['start'])) ? $_REQUEST['start'] : '');
-            
-            $destination = ((isset($_REQUEST['destination'])) ? $_REQUEST['destination'] : '');
-            
-            $mode = ((isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : '');
-            
-            
-            
-            if ($start != '' && $destination != '' && $mode != '') {
-                
-                
-                
-                $data_all = file_get_contents(base64_decode(APPSTRING) . 'xml?origin=' . $start . '&destination=' . $destination . '&sensor=false&mode=' . $mode);
-                
-                //echo $data_all;
-                
-                $xml = xml2array($data_all);
-                
-                //echo '<pre>';
-                
-                //print_r($xml);
-                
-                $amain = array();
-                
-                $data = array();
-                
-                $data['routes'] = $xml['DirectionsResponse']['route'];
-                
-                $amain = $xml['DirectionsResponse']['route']['leg']['step'];
-                
-                if (!empty($amain)) {
-                    
-                    //echo '<pre>';
-                    
-                    //$val = decodePolylineToArray('e`miGhmocNgBf@cBb@KBiGnB');
-                    
-                    //print_r($val);
-                    
-                    
-                    
-                    for ($i = 0; $i < count($amain); $i++) {
-                        
-                        
-                        
-                        //echo '<pre>';
-                        
-                        //print_r(getdata($amain[$i]['description']));
-                        
-                        
-                        
-                        $point = decodePolylineToArray($amain[$i]['polyline']['points']);
-                        
-                        //print_r($point);
-                        
-                        
-                        
-                        
-                        
-                        for ($j = 0; $j < count($point); $j++) {
-                            
-                            $valueP = $point[$j][0] . "," . $point[$j][1];
-                            
-                            if (!in_array($valueP, $data['route_geometry'])) {
-                                
-                                $data['route_geometry'][] = $point[$j][0] . "," . $point[$j][1];
-                                
-                            }
-                            
-                        }
-                        
-                        
-                        
-                    }
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'posts' => $data
-                        
-                        
-                        
-                    );
-                    
-                    
-                    
-                } else {
-                    
-                    
-                    
-                    $return = array(
-                        
-                        'error' => 1,
-                        
-                        'msg' => 'no result'
-                        
-                    );
-                    
-                    
-                    
-                    
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-            } else {
-                
-                throw new Exception("fields can not be null");
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            break;
-        
-        case 'gaaetRouteForWayPoints':
-            
-            
-            
-            $start = ((isset($_REQUEST['start'])) ? $_REQUEST['start'] : '');
-            
-            $destination = ((isset($_REQUEST['destination'])) ? $_REQUEST['destination'] : '');
-            
-            $waypoint = ((isset($_REQUEST['waypoint'])) ? $_REQUEST['waypoint'] : '');
-            
-            $mode = ((isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : '');
-            
-            $alternatives = ((isset($_REQUEST['alternatives'])) ? "&alternatives=" . $_REQUEST['alternatives'] : '');
-            
-            
-            
-            
-            
-            if ($start != '' && $destination != '' && $mode != '') {
-                
-                
-                
-                
-                
-                if ($waypoint != "")
-                    $data_all = file_get_contents(base64_decode(APPSTRING) . 'json?origin=' . $start . '&destination=' . $destination . '&waypoints=optimize:true|' . $waypoint . '&sensor=false&mode=' . $mode . $alternatives);
-                
-                else
-                    $data_all = file_get_contents(base64_decode(APPSTRING) . 'json?origin=' . $start . '&destination=' . $destination . '&sensor=false&mode=' . $mode . $alternatives);
-                
-                
-                
-                //  echo $data_all;
-                
-                
-                
-                $response = json_decode($data_all, true);
-                
-                //print_r($response);
-                
-                
-                
-                $overall = $response['routes'][0]['overview_polyline']['points'];
-                
-                $ove_Val = decodePolylineToArray($overall);
-                
-                //print_r($ove_Val);
-                
-                
-                
-                for ($ov = 0; $ov < count($ove_Val); $ov++) {
-                    
-                    $valueP = $ove_Val[$ov][0] . "," . $ove_Val[$ov][1];
-                    
-                    if (!in_array($valueP, $data['overall_route'])) {
-                        
-                        $response['overall_route'][] = $ove_Val[$ov][0] . "," . $ove_Val[$ov][1];
-                        
-                    }
-                    
-                }
-                
-                
-                
-                $amaink = $response['routes'][0]['legs'];
-                
-                
-                
-                if (!empty($amaink)) {
-                    
-                    //echo sizeof($amaink);
-                    
-                    for ($k = 0; $k < count($amaink); $k++) {
-                        
-                        
-                        
-                        $amain = $amaink[$k]['steps'];
-                        
-                        for ($i = 0; $i < count($amain); $i++) {
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            $point = decodePolylineToArray($amain[$i]['polyline']['points']);
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            for ($j = 0; $j < count($point); $j++) {
-                                
-                                $valueP = $point[$j][0] . "," . $point[$j][1];
-                                
-                                if (!in_array($valueP, $data['route_geometry'])) {
-                                    
-                                    $response['route_geometry'][] = $point[$j][0] . "," . $point[$j][1];
-                                    
-                                }
-                                
-                            }
-                            
-                            
-                            
-                        }
-                        
-                    }
-                    
-                }
-                
-                
-                
-                
-                
-                $posts["posts"] = $response;
-                
-                $posts["error"] = 0;
-                
-                
-                
-                
-                
-                echo json_encode($posts);
-                
-                
-                
-                exit;
-                
-                
-                
-                
-                
-                
-                
-                //echo $data_all;
-                
-                $xml = xml2array($data_all);
-                
-                //echo '<pre>';
-                
-                //print_r($xml);
-                
-                //print_r($xml['DirectionsResponse']['route']);
-                
-                //exit();
-                
-                $amain = array();
-                
-                $data = array();
-                
-                $data['routes'] = $xml['DirectionsResponse']['route'];
-                
-                //print_r($data['routes']);
-                
-                $overall = $xml['DirectionsResponse']['route']['overview_polyline']['points'];
-                
-                $ove_Val = decodePolylineToArray($overall);
-                
-                //print_r($ove_Val);
-                
-                
-                
-                for ($ov = 0; $ov < count($ove_Val); $ov++) {
-                    
-                    $valueP = $ove_Val[$ov][0] . "," . $ove_Val[$ov][1];
-                    
-                    if (!in_array($valueP, $data['overall_route'])) {
-                        
-                        $data['overall_route'][] = $ove_Val[$ov][0] . "," . $ove_Val[$ov][1];
-                        
-                    }
-                    
-                }
-                
-                //print_r($data['overall_route']);
-                
-                //exit();
-                
-                $amaink = $xml['DirectionsResponse']['route']['leg'];
-                
-                //print_r($amaink);
-                
-                //exit();
-                
-                if (!empty($amaink)) {
-                    
-                    for ($k = 0; $k < count($amaink); $k++) {
-                        
-                        
-                        
-                        $amain = $amaink[$k]['step'];
-                        
-                        for ($i = 0; $i < count($amain); $i++) {
-                            
-                            
-                            
-                            //echo '<pre>';
-                            
-                            //print_r(getdata($amain[$i]['description']));
-                            
-                            
-                            
-                            $point = decodePolylineToArray($amain[$i]['polyline']['points']);
-                            
-                            //print_r($point);
-                            
-                            
-                            
-                            
-                            
-                            for ($j = 0; $j < count($point); $j++) {
-                                
-                                $valueP = $point[$j][0] . "," . $point[$j][1];
-                                
-                                if (!in_array($valueP, $data['route_geometry'])) {
-                                    
-                                    $data['route_geometry'][] = $point[$j][0] . "," . $point[$j][1];
-                                    
-                                }
-                                
-                            }
-                            
-                            
-                            
-                        }
-                        
-                    }
-                    
-                    $return = array(
-                        
-                        'error' => 0,
-                        
-                        'posts' => $data
-                        
-                        
-                        
-                    );
-                    
-                    
-                    
-                } else {
-                    
-                    
-                    
-                    $return = array(
-                        
-                        'error' => 1,
-                        
-                        'msg' => 'no result'
-                        
-                    );
-                    
-                    
-                    
-                    
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-            } else {
-                
-                throw new Exception("fields can not be null");
-                
-            }
-            
-            
-            
-            
-            
-            
-            
-            break;
-        
-        case 'getRouteForWayPoints':
-            
-            $start        = ((isset($_REQUEST['start'])) ? $_REQUEST['start'] : '');
-            $destination  = ((isset($_REQUEST['destination'])) ? $_REQUEST['destination'] : '');
-            $waypoint     = ((isset($_REQUEST['waypoint'])) ? $_REQUEST['waypoint'] : '');
-            $mode         = ((isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : '');
-            $alternatives = ((isset($_REQUEST['alternatives'])) ? "&alternatives=" . $_REQUEST['alternatives'] : '');
-            
-            //echo 'aaa';
-            
-            if ($start != '' && $destination != '' && $mode != '') {
-                
-                $data_all      = file_get_contents('http://routes.cloudmade.com/0dadda39e8f44f74809db0445e02743f/api/0.3/' . $start . ',' . $destination . '/car/fastest.js');
-                $mainRoute     = json_decode($data_all, true);
-                $dataarr       = array();
-                $steps         = array();
-                $totalDistance = 0;
-                $duraTion      = 0;
-                foreach ($mainRoute['route_instructions'] as $key => $route) {
-                    $steps['steps'][] = array(
-                        'distance' => array(
-                            'text' => $route[4],
-                            'value' => $route[1]
-                        ),
-                        'duration' => array(
-                            'value' => $route[3],
-                            'text' => round(($route[3] / 60), 2) . ' mins'
-                        ),
-                        'html_instructions' => $route[0],
-                        'polyline' => array(
-                            'points' => generatePolyline($mainRoute, $key)
-                        )
-                    );
-                    $totalDistance += $route[1];
-                    $duraTion += $route[3];
-                }
-                $containerArray = array(
-                    'posts' => array(
-                        'routes' => array(
-                            '0' => array(
-                                'legs' => array(
-                                    '0' => array(
-                                        'distance' => array(
-                                            'text' => round(($totalDistance / 1000), 2) . ' Km',
-                                            'value' => $totalDistance
-                                        ),
-                                        'duration' => array(
-                                            'text' => round(($duraTion / 60), 2) . ' mins',
-                                            'value' => $duraTion
-                                        ),
-                                        'steps' => $steps['steps'],
-                                        'via_waypoint' => array()
-                                    )
-                                ),
-                                'waypoint_order' => array()
-                            )
-                        ),
-                        'status' => 'OK',
-                        'route_geometry' => createRouteGeometry($mainRoute)
-                    ),
-                    'error' => 0
-                );
-                
-                echo json_encode($containerArray);
-                
-                exit;
-                
-            } else {
-                throw new Exception("fields can not be null");
-            }
-            
-            
-            
-            break;
+       
         
         default:
             
