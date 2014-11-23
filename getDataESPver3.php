@@ -1898,12 +1898,15 @@ try {
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
 
                                 FROM navigar_fetch_xmldata 
-                                WHERE  Match(label) AGAINST ('" . $FraseInicial . " IN BOOLEAN MODE')  and   Match(street) AGAINST ('" . $FraseFinal . "')";
-                                
+                                WHERE  Match(label) AGAINST ('BANCO NACIONAL' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinal . "')";
+                                                            //('+BANCO +NACIONAL' IN BOOLEAN MODE)
 
-                            $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 2.2) ORDER BY Score desc  limit 0,3";
+                            $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 2.2) ORDER BY Score desc  limit 0,6";
+                            
                        
 
+
+                            /*
                               $res = mysql_query($sql);
                               $num = mysql_num_rows($res);
                                 if ($num <= 0) 
@@ -1923,7 +1926,7 @@ try {
 
                                 }
 
-
+*/
 
                         }
                         
