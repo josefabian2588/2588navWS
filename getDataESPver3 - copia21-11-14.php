@@ -1611,8 +1611,8 @@ try {
                 
                 
                 if ($TerminoEncontrado === 1) {
-                     // $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
-                     //  mysql_query($sql_insertrecord);
+                      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$TerminoEncontrado === 1'";
+                       mysql_query($sql_insertrecord);
 
                     
                     
@@ -1653,7 +1653,8 @@ try {
 
 
                     if ($resultPalabrafinal === true) {
-                        
+                             $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true'";
+                       mysql_query($sql_insertrecord);
 
                   //       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
                   //     mysql_query($sql_insertrecord);
@@ -1724,6 +1725,8 @@ try {
 
            if ($num <= 0) {
 
+                              $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true $num <= 0'";
+                       mysql_query($sql_insertrecord);
  
                         $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                         $resHexcode = mysql_query($sql);
@@ -1794,6 +1797,8 @@ try {
 
                     else {
                         
+                            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN POBLADO '";
+                       mysql_query($sql_insertrecord);
                             
                              $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                              $resHexcode = mysql_query($sql);
@@ -1851,7 +1856,8 @@ try {
                     
                     if ($num > 0) {
                         
-                        
+                            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN POBLADO $num > 0'";
+                       mysql_query($sql_insertrecord);
 
 
                         
@@ -1971,7 +1977,10 @@ try {
                     /*SI ES SOLO UNA PALABRA , ORDENA POR DISTANCIA */
             if ($numeroTrozos === 1) {
                         
-                        
+                                 $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$numeroTrozos === 1'";
+                       mysql_query($sql_insertrecord);
+
+
                              $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicial . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
@@ -1997,6 +2006,11 @@ try {
 
                     /* verifica si la ultima palabra es un poblado  */
 
+
+                          $sql_insertrecord = "insert into tb_SearchRecords set searchterm='SI ES *MAS* DE UNA PALABRA'";
+                       mysql_query($sql_insertrecord);
+
+
                         $resultPalabrafinal = false;
                     
                        $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba si la ultima plabra concuerda con algun poblado 
@@ -2013,7 +2027,8 @@ try {
                             /* la ultima palabra es un street */ 
                          if ($resultPalabrafinal === true) 
                          {
-
+                             $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true'";
+                       mysql_query($sql_insertrecord);
                          //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $resultPalabrafinal . "'";
                          //  mysql_query($sql_insertrecord);
 
@@ -2054,6 +2069,10 @@ try {
                               $num = mysql_num_rows($res);
                                 if ($num <= 0) 
                                 {
+                                      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true $num <= 0'";
+                                      mysql_query($sql_insertrecord);
+
+
                                      $sql="";
                                      $sql = "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinal . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
@@ -2238,7 +2257,8 @@ try {
                         //   where  `label` like '%" . $search_term . "%' 
                         //  *******************************************  
                         
-                        
+                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='SEGUNDA metodo de busqueda'";
+                                      mysql_query($sql_insertrecord);
                         
                         $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
@@ -2364,7 +2384,10 @@ try {
                             
                             
                             
-                            
+                             $sql_insertrecord = "insert into tb_SearchRecords set searchterm='TERCER opcion de busqueda'";
+                                      mysql_query($sql_insertrecord);
+
+
                             
                             $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
@@ -2477,6 +2500,8 @@ try {
                                 //   where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)
                                 //  *******************************************  
                                 
+                                 $sql_insertrecord = "insert into tb_SearchRecords set searchterm='CUARTO metodo de busqueda'";
+                                      mysql_query($sql_insertrecord);
                                 
                                 $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
                             (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
