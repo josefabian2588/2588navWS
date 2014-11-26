@@ -1,6 +1,6 @@
 TODO
 -----------
-1-Busqueda por alias (Ej:"BK" y "MC").    /*MALO*/
+1-Busqueda por alias (Ej:"BK" y "MC").    /*FUNCIONA*/
 
 2-La lista de resultados se ordena por distancia, lo anterior cuando se  realiza una búsqueda por un termino simple  (Ej: "Bar","Pasteles" ) . /*FUNCIONA*/
       ***Busqueda por terminos compuestos ("tomar presion") . /*FUNCIONA*/
@@ -24,6 +24,6 @@ TODO
           
 8-Sí busca el nombre de un POI + la zona (EJ: "spoon de Heredia" , )        /*FUNCIONA*/   
 
-9-Sí busca el nombre de un POI + la zona , PERO SIN USAR DE O EN  (EJ: "spoon Heredia" , )     /*MALO*/
-          
+9-Sí busca el nombre de un POI + la zona , PERO SIN USAR DE O EN  (EJ: "spoon Heredia" , )     /*FUNCIONA parcial*/
+   ** No funciona con poblados que tengan el nombre compuesto por dos palabras (EJ: San Jose).        
 
