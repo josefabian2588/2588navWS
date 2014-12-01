@@ -2462,7 +2462,7 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
 			
 		                
   
-       // ******************************************  
+            // ******************************************  
                 // Busquedas por terminos , Directorio     
                 //  *******************************************  
                 
@@ -2483,9 +2483,7 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                 $palabrafinal = $FraseFinal;  //pendiente por eliminar palabraFinal
 
 
-                
-
-                 /*****************
+                  /*****************
                  /* BUSQUEDA DE TERMINOS PARA TERMINOS COMPUESTOS , USANDO  search_termIntacto  
                  /*****************/
                 
@@ -2555,15 +2553,11 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
            }
 
 
-/*
-
-            if ($TerminoEncontrado === 0) {
-
+              if ($TerminoEncontrado === 0) {
                // $ArregloTermino = ObtenerTerminosDirectorio();
                    // $trozos       = explode(" ", $search_term);
                   //  $numero       = count($trozos);
                     $palabraInicial = $trozos[0];
-
                 
                 foreach ($ArregloTermino as $obj_key => $termino) {
                     
@@ -2587,21 +2581,15 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                     }
                     
                 }
-
-
            }
-
-*/
-
-
-            
-
-                 /*****************       
+           
+                
+                       /*****************       
                 /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO 
                 /*****************/
-
-
-
+              $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
+            mysql_query($sql_insertrecord); 
+             
                 if ($TerminoEncontrado === 1) {
 
         
@@ -2992,13 +2980,14 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                     
                     
                 } //termina busquedas por terminos 
+                    
+                    
+           
                 
                 else {
-                        
-
-             
-
-                    /******************
+                    
+                 
+                     /******************
                     /* 
                     /* EMPIEZA BUSQUEDA SIN SER TERMINO
                     /*
@@ -3014,8 +3003,7 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                     */
                     
                     // ******************************************  
-                    // PRIMERA opcion de busqueda 
-                    // Match(label) AGAINST ('" . $search_term . "')    
+                    // PRIMERA opcion de busqueda  
                     //  *******************************************     
 
         $array = obtenerNombreZona($search_term); 
@@ -3024,16 +3012,16 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
         $FraseInicial = trim($array['FraseInicial']);
 
 
-       
-
-
 /*SI ES SOLO UNA PALABRA */
 if ($numeroTrozos === 1) {
-
-                      $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
+                
+                    
+                    $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
 
                      
-                      $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                     $sql = "SELECT 
+
+                    *, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
                        ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
@@ -3042,15 +3030,12 @@ if ($numeroTrozos === 1) {
                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
                         FROM navigar_fetch_xmldata 
-                        WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) 
+                        where  typeHex!=''   " . $WC . "  AND   Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) 
                         or alias1=('" . $FraseInicial . "') 
                         or alias2=('" . $FraseInicial . "') 
                         or alias3=('" . $FraseInicial . "') 
                         HAVING distance < '" . $radius . "' 
                         ORDER BY distance limit 0,25";
-
-
-
 
 
 
@@ -3074,7 +3059,9 @@ if ($numeroTrozos === 1) {
 
                              $FraseInicialRequerida=palabraRequeridaBoolean($palabraCorregida);  //asigna el operador ´+´ para mejor resulta
 
-                        $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                       $sql = "SELECT 
+
+                    *, (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
                        ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
@@ -3083,7 +3070,7 @@ if ($numeroTrozos === 1) {
                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
                         FROM navigar_fetch_xmldata 
-                        WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) 
+                        where  typeHex!=''   " . $WC . "  AND   Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) 
                         or alias1=('" . $FraseInicial . "') 
                         or alias2=('" . $FraseInicial . "') 
                         or alias3=('" . $FraseInicial . "') 
@@ -3094,12 +3081,11 @@ if ($numeroTrozos === 1) {
 
 
 
+} //if ($numeroTrozos === 1) {
 
-}  //    if ($numeroTrozos === 1) {              
+else {
 
-else{
-     
-                                /***************************** */    
+                              /***************************** */    
                                /*  SI ES *MAS* DE UNA PALABRA   */
                                /****************************** */
 
@@ -3120,7 +3106,7 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
 
 
 
-/* la ultima palabra es un street */ 
+    /* la ultima palabra es un street */ 
     if ($resultPalabrafinal === true) 
     {
 
@@ -3128,21 +3114,16 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
 
                             $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
                            $FraseFinalRequerida=palabraRequeridaBoolean($FraseFinalCompletaTemp);  //asigna el operador ´+´ para mejor resultado
-          /*              
-       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinalRequerida . "'";
-        mysql_query($sql_insertrecord);
-        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='holaXXXXX'";
-        mysql_query($sql_insertrecord);  
-*/
 
-                           $sql = "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
+
+                           $sql = "SELECT *,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
 
                                 FROM navigar_fetch_xmldata 
-                                WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . " ' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE)";
+                                 where  typeHex!=''   " . $WC . "  AND Match(label) AGAINST ('" . $FraseInicialRequerida . " ' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE)";
                                 
 
                             $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 2.2) ORDER BY distance   limit 0,10";
@@ -3156,14 +3137,14 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
                             {
                                 
                                
-                                 $sql = "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
+                                 $sql = "SELECT *,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
 
                                 FROM navigar_fetch_xmldata 
-                                WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . " ' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE)";
+                                 where  typeHex!=''   " . $WC . "  AND    Match(label) AGAINST ('" . $FraseInicialRequerida . " ' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE)";
                                 
 
                             $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 0.4) ORDER BY distance   limit 0,15";
@@ -3205,13 +3186,13 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
                                    $FraseCorregida=EliminarPalabrasComunesExtras($testborrar);
                                    $FraseInicialRequerida=palabraRequeridaBoolean($FraseCorregida);  //asigna el operador ´+´ para mejor 
                       
-                             $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
+                             $sql = "SELECT *,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
                                       (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                       ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                                         * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                            
                                          FROM navigar_fetch_xmldata 
-                                         WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
+                                          where  typeHex!=''   " . $WC . "  AND   Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
                                          $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 0.5) ORDER BY distance  limit 0,20";
 
 
@@ -3226,52 +3207,18 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
                                  $FraseCorregida=EliminarPalabrasComunes($FraseCorregida);
                                  $FraseInicialRequerida=palabraRequeridaBoolean($FraseCorregida);  //asigna el operador ´+´ para mejor 
                                
-                                 $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
+                                 $$sql = "SELECT *,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
                                       (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                       ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                                         * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                            
                                          FROM navigar_fetch_xmldata 
-                                         WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
+                                          where  typeHex!=''   " . $WC . "  AND    Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
                                          $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score => 1) ORDER BY distance  limit 0,20";
                             
                             }  // FIN if ($num <= 0)                
 
-                       
-/*
-
-
-                                $sql = "SELECT *,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
-                                       (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
-                                         FROM navigar_fetch_xmldata 
-                                         WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
-                                         $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 0.4) ORDER BY Score desc  limit 0,15";       
-                   */          
-
-
-                       //       $res = mysql_query($sql);
-                    
-                    //          $num = mysql_num_rows($res);
-                
-                /*
-                             if ($num <= 0) {  // REVISAR UTILIDAD  
-
-                                 
-
-                                     $sql = "SELECT *,Match(label) AGAINST ('" . $search_term . "' IN BOOLEAN MODE) as Score,
-                                         (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-                                         ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
-                                        * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-                                        * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                 
-                                         FROM navigar_fetch_xmldata 
-                                         WHERE  Match(label) AGAINST ('" . $search_term . "' IN BOOLEAN MODE) ";
-                                         $sql = $sql . " HAVING  Score > 1 ORDER BY distance  limit 0,15";
-
-
-                             }           
-                     
-
-*/
+ 
 
             } // ELSE .........LA ULTIMA PALABRA -NO- ES UN POBLADO
 
@@ -3279,11 +3226,18 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
 
 
 
-$res = mysql_query($sql);                    
-$x = 0;
-$data = array();
-$num = mysql_num_rows($res);
-
+                    
+                    $res = mysql_query($sql);
+                    
+                    
+                    
+                    $x = 0;
+                    
+                    $data = array();
+                    
+                    $num = mysql_num_rows($res);
+                    
+                    
                     
                     if ($num > 0) {
                         
@@ -3362,9 +3316,6 @@ $num = mysql_num_rows($res);
                         /* ORDENAR ARRAY  */
                       usort($data, 'ordenarArrayDistancia');
                         
-                       
-
-
                         $return = array(
                             
                             'error' => 0,
@@ -3375,9 +3326,11 @@ $num = mysql_num_rows($res);
                             
                         );
                         
-         } // if ($num > 0) {
+                    }// if ($num > 0) {
                     
-        else {
+                    
+
+                     else {
                         
                         //  ****************************************  
                         //   SEGUNDO metodo de busqueda
@@ -3402,15 +3355,14 @@ $num = mysql_num_rows($res);
                             $FraseCorregida=EliminarPalabrasComunesExtras($FraseCorregida);
                             $FraseCorregida=EliminarPalabrasComunes($FraseCorregida);
 
-                     //   $FraseTemporal=EliminarPalabrasComunesExtras($search_termIntacto);
-                      //  $FraseInicialRequerida=palabraRequeridaBoolean($FraseTemporal);
+                
 
                                 if (str_word_count($FraseCorregida,0)===1)
                                     /*      SOLO ES UNA PALABRA   */
                                     /* Se obtienen resultados si se encuentran palabras que comiencen con "note" como "notebook", "notepad", etc */
                                 {
 
-                                        $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                        $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
 
                                        ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
 
@@ -3419,7 +3371,7 @@ $num = mysql_num_rows($res);
                                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
 
                                         FROM navigar_fetch_xmldata 
-                                        WHERE  Match(label) AGAINST ('" . $FraseCorregida . "*' IN BOOLEAN MODE) 
+                                        where  typeHex!=''   " . $WC . "  AND  Match(label) AGAINST ('" . $FraseCorregida . "*' IN BOOLEAN MODE) 
                                         or alias1=('" . $FraseInicial . "') 
                                         or alias2=('" . $FraseInicial . "') 
                                         or alias3=('" . $FraseInicial . "') 
@@ -3444,7 +3396,7 @@ $num = mysql_num_rows($res);
                                     * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                                     * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
                                     FROM navigar_fetch_xmldata 
-                                    WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
+                                    where  typeHex!=''   " . $WC . "  AND Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) ";
                                    // $sql = $sql . " HAVING Score > 0.5  ORDER BY Score  limit 0,15";      
                                       $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 0.5)  ORDER BY distance  limit 0,15";  
 
@@ -3728,7 +3680,8 @@ else {
                         } //tercer segundo metodo de busqueda normal
                         
                     } //fin segundo metodo de busqueda normal
-                    
+
+
                 } // fin primer metodo de busqueda normal
                 
                 
@@ -3738,7 +3691,9 @@ else {
             
            
             
-            break;
+            break;       
+
+
         
         /*
           case 'jsoninsert':
