@@ -2891,7 +2891,7 @@ ORDER BY distance";
                                                 }
                                               
                                     
-                                                   $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,20";
+                                                   $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,15";
 
                          //                } //FIN if ($num <= 0) {
 
@@ -3114,8 +3114,6 @@ else{
 
 /* comprobar si la ultima palabra es un poblado  */
 
-$sql_insertrecord = "insert into tb_SearchRecords set searchterm=' entro1'";
-           mysql_query($sql_insertrecord);
             
 $resultPalabrafinal = false;
                     
@@ -3446,8 +3444,7 @@ $num = mysql_num_rows($res);
 
                                  $FraseInicialRequerida=palabraRequeridaBoolean($FraseCorregida);  //asigna el operador ´+´ para mejor 
 
-                               $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicialRequerida . "'";
-                        mysql_query($sql_insertrecord);
+                        
 
 
                                     $sql = "SELECT *,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
