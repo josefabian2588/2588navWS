@@ -167,7 +167,8 @@ if(count($trozos)>=1) {
  //   $palabraZonaExtra="";
     $contadorBlackWord=0;
     $FraseInicial="";
-            
+    $testborrar="";  
+   
 
 
 for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
@@ -188,6 +189,9 @@ for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
                           if($contadorBlackWord===1){
 
                                 //$NombreZona =$NombreZona. $trozos[$e+1]; 
+                                $testborrar=$testborrar.$trozos[$e];
+                                $testborrar =$testborrar." ";
+                           
                                 $contadorBlackWord++;
 
                           }
@@ -199,10 +203,18 @@ for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
                                         $NombreZonaCompleto =$NombreZonaCompleto." ";
                                         $NombreZonaCompleto =$NombreZonaCompleto. $trozos[$e];
                                        // $NombreZona =$NombreZona. $trozos[$e];     
-
+                                         $contadorBlackWord++;
                                 }
                                 else
                                 {
+                                    if ($contadorBlackWord<3) //3 siginifica q hay mas de 
+                                    {
+                                      $testborrar=$testborrar.$trozos[$e];
+                                      $testborrar =$testborrar." ";
+
+                                    }
+                                  //   $testborrar=$testborrar.$trozos[$e];
+                                   //   $testborrar =$testborrar." ";
                                     $NombreZona =$NombreZona." "; 
                                     $NombreZona =$NombreZona. $trozos[$e];
                                     $NombreZonaCompleto = $NombreZonaCompleto." ";
@@ -226,7 +238,10 @@ for($i=0; $i<=count($trozos); $i++) { //Recorro todos los elementos
                      if($contadorBlackWord===0){
 
                          $FraseInicial=$FraseInicial. $trozos[$i];
-                         $FraseInicial =$FraseInicial." "; 
+                         $FraseInicial =$FraseInicial." ";
+                         $testborrar=$testborrar.$trozos[$i];
+                         $testborrar =$testborrar." ";
+
                      }
              }
              
@@ -242,7 +257,8 @@ $NombreZona=trim($NombreZona);
 
 
 return array(    'FraseFinal' => $NombreZona,
-                 'FraseFinalCompleta' => $NombreZonaCompleto,   
+                 'FraseFinalCompleta' => $NombreZonaCompleto, 
+                 'testborrartest' => $testborrar,   
                  'FraseInicial' => $FraseInicial);
 
 }
@@ -1242,7 +1258,42 @@ try {
         $FraseFinal = trim($array['FraseFinal']);
         $FraseFinalCompleta = trim($array['FraseFinalCompleta']);
         $FraseInicial = trim($array['FraseInicial']);
+        $testborrar = trim($array['testborrartest']);
 
+
+        if(str_word_count($FraseInicial,0)<=1)
+        {
+              $sql = "SELECT id,Match(label) AGAINST ('" . $testborrar . "') as Score FROM navigar_fetch_xmldata where  Match(label) AGAINST ('" . $testborrar . "' )";
+              $sql = $sql . " HAVING Score > 11" ;
+              $res = mysql_query($sql);
+              $num = mysql_num_rows($res);
+
+            if ($num>0){
+                $FraseInicial=EliminarPalabrasComunesExtras($testborrar);
+
+                $arraytest1=explode(" ",$FraseInicial);
+                array_push($arraytest1, ",");
+
+                   for($i=0; $i<count($arraytest1); $i++) { //Recorro todos los elementos
+
+                        $FraseFinal = str_ireplace($arraytest1[$i], "", $FraseFinal);
+
+                     }
+                    $FraseFinal= trim($FraseFinal);
+            }
+
+
+
+
+        }
+       
+
+        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
+         mysql_query($sql_insertrecord);
+
+        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
+         mysql_query($sql_insertrecord);
+     
 
 //PRUEBA  ------------------------------------
 
@@ -1611,8 +1662,12 @@ try {
                 
                 
                 if ($TerminoEncontrado === 1) {
-                      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$TerminoEncontrado === 1'";
-                       mysql_query($sql_insertrecord);
+                     // $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro!!'";
+                     //  mysql_query($sql_insertrecord);
+
+
+                      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro3!!!'";
+                      mysql_query($sql_insertrecord);
 
                     
                     
@@ -1653,8 +1708,7 @@ try {
 
 
                     if ($resultPalabrafinal === true) {
-                             $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true'";
-                       mysql_query($sql_insertrecord);
+                        
 
                   //       $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinal . "'";
                   //     mysql_query($sql_insertrecord);
@@ -1725,8 +1779,10 @@ try {
 
            if ($num <= 0) {
 
-                              $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true $num <= 0'";
-                       mysql_query($sql_insertrecord);
+
+                            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro2!!!'";
+                      mysql_query($sql_insertrecord);
+
  
                         $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                         $resHexcode = mysql_query($sql);
@@ -1797,9 +1853,11 @@ try {
 
                     else {
                         
-                            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN POBLADO '";
-                       mysql_query($sql_insertrecord);
-                            
+                              
+                          $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro1!!!'";
+                      mysql_query($sql_insertrecord);
+
+
                              $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                              $resHexcode = mysql_query($sql);
                              $sql ="";
@@ -1856,8 +1914,7 @@ try {
                     
                     if ($num > 0) {
                         
-                            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN POBLADO $num > 0'";
-                       mysql_query($sql_insertrecord);
+                        
 
 
                         
@@ -1949,15 +2006,20 @@ try {
 
                     
                 } //termina busquedas por terminos 
-                
-
-
-
+              
 
                 else {
                     
-                    
-                    
+                    /******************
+                    /* 
+                    /* EMPIEZA BUSQUEDA SIN SER TERMINO
+                    /*
+                    /*****************
+
+
+
+
+
                     /* TERMINOS DE PRUEBA , EN ALGUN MOMENTO DIERON PROBLEMAS DE Busquedas
                     
                     coopecoronado
@@ -1977,10 +2039,9 @@ try {
                     /*SI ES SOLO UNA PALABRA , ORDENA POR DISTANCIA */
             if ($numeroTrozos === 1) {
                         
-                                 $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$numeroTrozos === 1'";
-                       mysql_query($sql_insertrecord);
-
-
+                        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro5!!!'";
+                      mysql_query($sql_insertrecord);
+                        
                              $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicial . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
@@ -1997,6 +2058,8 @@ try {
                    
              else {
                       
+                      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='entro6!!!'";
+                      mysql_query($sql_insertrecord);
                      /***************************** */    
                     /*  SI ES *MAS* DE UNA PALABRA   */
                     /****************************** */
@@ -2005,11 +2068,6 @@ try {
              //     mysql_query($sql_insertrecord);
 
                     /* verifica si la ultima palabra es un poblado  */
-
-
-                          $sql_insertrecord = "insert into tb_SearchRecords set searchterm='SI ES *MAS* DE UNA PALABRA'";
-                       mysql_query($sql_insertrecord);
-
 
                         $resultPalabrafinal = false;
                     
@@ -2027,8 +2085,7 @@ try {
                             /* la ultima palabra es un street */ 
                          if ($resultPalabrafinal === true) 
                          {
-                             $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true'";
-                       mysql_query($sql_insertrecord);
+
                          //   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $resultPalabrafinal . "'";
                          //  mysql_query($sql_insertrecord);
 
@@ -2059,7 +2116,7 @@ try {
                                 WHERE  Match(label) AGAINST ('" . $test . " ' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinal . "')";
                                 
 
-                            $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 2.2) ORDER BY Score desc  limit 0,3";
+                            $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score > 2.2) ORDER BY Score desc  limit 0,15";
                        
                         //    $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $test . "'";
                         //    mysql_query($sql_insertrecord);
@@ -2069,10 +2126,6 @@ try {
                               $num = mysql_num_rows($res);
                                 if ($num <= 0) 
                                 {
-                                      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='$resultPalabrafinal === true $num <= 0'";
-                                      mysql_query($sql_insertrecord);
-
-
                                      $sql="";
                                      $sql = "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinal . "') as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
@@ -2110,7 +2163,7 @@ try {
                             /*
                             /*  CORRECTOR ORTOGRAFICO */
                             
-                            /*
+                          
                             $Sugerencias = array();
                             $palabras    = explode(" ", $search_term);
                             $contador    = 1;
@@ -2131,7 +2184,7 @@ try {
                                           WHERE  Match(label) AGAINST ('" . $search_term . "') 
                                            ORDER BY Score DESC limit 0,3";
                             
-                            */
+                          
                             
                         }
                         
@@ -2247,385 +2300,8 @@ try {
                             
                         );
                         
-                    } else {
-                        
-                        
-                        
-                        
-                        //  ****************************************  
-                        //  SEGUNDA metodo de busqueda
-                        //   where  `label` like '%" . $search_term . "%' 
-                        //  *******************************************  
-                        
-                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='SEGUNDA metodo de busqueda'";
-                                      mysql_query($sql_insertrecord);
-                        
-                        $sql = "SELECT id,label,street,latitude,longitude,phone,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-
-                                         ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
-
-                                         * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-
-                                         * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance 
-
-                                         FROM navigar_fetch_xmldata 
-                                          where   `label` like '%" . $search_term . "%' 
-
-                                         HAVING distance < '" . $radius . "' 
-                                         ORDER BY distance limit 0,30";
-                        
-                        
-                        
-                        
-                        
-                        $res = mysql_query($sql);
-                        
-                        $x = 0;
-                        
-                        $data = array();
-                        
-                        $num = mysql_num_rows($res);
-                        
-                        
-                        
-                        if ($num > 0) {
-                            
-                            while ($row = mysql_fetch_object($res)) {
-                                
-                                
-                                
-                                $data[$x]['id'] = $row->id;
-                                
-                                
-                                
-                                $_SQL = "SELECT * FROM navigar_reviews WHERE poi_id='" . $row->id . "' AND  imei='" . $imei . "' ";
-                                
-                                $_alreadyRev = mysql_query($_SQL);
-                                
-                                
-                                
-                                
-                                $sqlrateC = "select count(t3.id) as rating  from navigar_reviews as t3 where t3.poi_id=" . $row->id;
-                                
-                                $res_rateC = mysql_query($sqlrateC);
-                                
-                                $row_rateC = mysql_fetch_object($res_rateC);
-                                
-                                $data[$x]['review_count'] = $row_rateC->rating;
-                                
-                                
-                                
-                                
-                                
-                                //print_r($row_rate);
-                                
-                                if (mysql_num_rows($_alreadyRev) > 0)
-                                    $data[$x]['already_reviewd'] = "true";
-                                
-                                else
-                                    $data[$x]['already_reviewd'] = "false";
-                                
-                                
-                                
-                                $data[$x]['label'] = $row->label;
-                                
-                                $data[$x]['street']   = $row->street;
-                                $data[$x]['location'] = $row->location;
-                                
-                                $data[$x]['city'] = $row->city;
-                                
-                                $data[$x]['region'] = $row->region;
-                                
-                                $data[$x]['country'] = $row->country;
-                                
-                                $data[$x]['pincode'] = $row->pincode;
-                                
-                                $data[$x]['type'] = $row->type;
-                                
-                                $data[$x]['typeHex'] = $row->typeHex;
-                                
-                                $data[$x]['latitude'] = $row->latitude;
-                                
-                                $data[$x]['longitude'] = $row->longitude;
-                                
-                                $data[$x]['phone'] = $row->phone;
-                                
-                                $data[$x]['rating'] = $row->rating;
-                                
-                                
-                                
-                                $data[$x]['distance'] = $row->distance;
-                                
-                                
-                                
-                                $x++;
-                                
-                            }
-                            
-                            $return = array(
-                                
-                                'error' => 0,
-                                
-                                'posts' => $data
-                                
-                                
-                                
-                            );
-                            
-                            
-                        } else {
-                            
-                            
-                            //  *******************************************  
-                            // TERCER opcion de busqueda
-                            // match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE) 
-                            //
-                            //  *******************************************  
-                            
-                            
-                            
-                             $sql_insertrecord = "insert into tb_SearchRecords set searchterm='TERCER opcion de busqueda'";
-                                      mysql_query($sql_insertrecord);
-
-
-                            
-                            $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
-                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
-                             FROM navigar_fetch_xmldata 
-                             WHERE  Match(label) AGAINST ('" . $search_term . "*' IN BOOLEAN MODE)  ORDER BY Score DESC  limit 0,20";
-                            
-                            
-                            
-                            $res = mysql_query($sql);
-                            
-                            
-                            
-                            $x = 0;
-                            
-                            $data = array();
-                            
-                            $num = mysql_num_rows($res);
-                            
-                            
-                            
-                            if ($num > 0) {
-                                
-                                while ($row = mysql_fetch_object($res)) {
-                                    
-                                    
-                                    
-                                    $data[$x]['id'] = $row->id;
-                                    
-                                    
-                                    
-                                    $_SQL = "SELECT * FROM navigar_reviews WHERE poi_id='" . $row->id . "' AND  imei='" . $imei . "' ";
-                                    
-                                    $_alreadyRev = mysql_query($_SQL);
-                                    
-                                    
-                                    
-                                    
-                                    $sqlrateC = "select count(t3.id) as rating  from navigar_reviews as t3 where t3.poi_id=" . $row->id;
-                                    
-                                    $res_rateC = mysql_query($sqlrateC);
-                                    
-                                    $row_rateC = mysql_fetch_object($res_rateC);
-                                    
-                                    $data[$x]['review_count'] = $row_rateC->rating;
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    //print_r($row_rate);
-                                    
-                                    if (mysql_num_rows($_alreadyRev) > 0)
-                                        $data[$x]['already_reviewd'] = "true";
-                                    
-                                    else
-                                        $data[$x]['already_reviewd'] = "false";
-                                    
-                                    
-                                    
-                                    $data[$x]['label'] = $row->label;
-                                    
-                                    $data[$x]['street']   = $row->street;
-                                    $data[$x]['location'] = $row->location;
-                                    
-                                    $data[$x]['city'] = $row->city;
-                                    
-                                    $data[$x]['region'] = $row->region;
-                                    
-                                    $data[$x]['country'] = $row->country;
-                                    
-                                    $data[$x]['pincode'] = $row->pincode;
-                                    
-                                    $data[$x]['type'] = $row->type;
-                                    
-                                    $data[$x]['typeHex'] = $row->typeHex;
-                                    
-                                    $data[$x]['latitude'] = $row->latitude;
-                                    
-                                    $data[$x]['longitude'] = $row->longitude;
-                                    
-                                    $data[$x]['phone'] = $row->phone;
-                                    
-                                    $data[$x]['rating'] = $row->rating;
-                                    
-                                    
-                                    
-                                    $data[$x]['distance'] = $row->distance;
-                                    
-                                    
-                                    
-                                    $x++;
-                                    
-                                }
-                                
-                                $return = array(
-                                    
-                                    'error' => 0,
-                                    
-                                    'posts' => $data
-                                    
-                                    
-                                    
-                                );
-                                
-                            } else {
-                                
-                                
-                                //  ****************************************  
-                                //  CUARTO metodo de busqueda
-                                //   where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)
-                                //  *******************************************  
-                                
-                                 $sql_insertrecord = "insert into tb_SearchRecords set searchterm='CUARTO metodo de busqueda'";
-                                      mysql_query($sql_insertrecord);
-                                
-                                $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $search_term . "') as Score,
-                            (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating 
-                             FROM navigar_fetch_xmldata 
-                             where  Match(label) AGAINST ('" . $search_term . "' WITH QUERY EXPANSION)   ORDER BY Score DESC  limit 0,15";
-                                
-                                
-                                $res = mysql_query($sql);
-                                
-                                
-                                
-                                $x = 0;
-                                
-                                $data = array();
-                                
-                                $num = mysql_num_rows($res);
-                                
-                                
-                                
-                                if ($num > 0) {
-                                    
-                                    while ($row = mysql_fetch_object($res)) {
-                                        
-                                        
-                                        
-                                        $data[$x]['id'] = $row->id;
-                                        
-                                        
-                                        
-                                        $_SQL = "SELECT * FROM navigar_reviews WHERE poi_id='" . $row->id . "' AND  imei='" . $imei . "' ";
-                                        
-                                        $_alreadyRev = mysql_query($_SQL);
-                                        
-                                        
-                                        
-                                        
-                                        $sqlrateC = "select count(t3.id) as rating  from navigar_reviews as t3 where t3.poi_id=" . $row->id;
-                                        
-                                        $res_rateC = mysql_query($sqlrateC);
-                                        
-                                        $row_rateC = mysql_fetch_object($res_rateC);
-                                        
-                                        $data[$x]['review_count'] = $row_rateC->rating;
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        //print_r($row_rate);
-                                        
-                                        if (mysql_num_rows($_alreadyRev) > 0)
-                                            $data[$x]['already_reviewd'] = "true";
-                                        
-                                        else
-                                            $data[$x]['already_reviewd'] = "false";
-                                        
-                                        
-                                        
-                                        $data[$x]['label'] = $row->label;
-                                        
-                                        $data[$x]['street']   = $row->street;
-                                        $data[$x]['location'] = $row->location;
-                                        
-                                        $data[$x]['city'] = $row->city;
-                                        
-                                        $data[$x]['region'] = $row->region;
-                                        
-                                        $data[$x]['country'] = $row->country;
-                                        
-                                        $data[$x]['pincode'] = $row->pincode;
-                                        
-                                        $data[$x]['type'] = $row->type;
-                                        
-                                        $data[$x]['typeHex'] = $row->typeHex;
-                                        
-                                        $data[$x]['latitude'] = $row->latitude;
-                                        
-                                        $data[$x]['longitude'] = $row->longitude;
-                                        
-                                        $data[$x]['phone'] = $row->phone;
-                                        
-                                        $data[$x]['rating'] = $row->rating;
-                                        
-                                        
-                                        
-                                        $data[$x]['distance'] = $row->distance;
-                                        
-                                        
-                                        
-                                        $x++;
-                                        
-                                    }
-                                    
-                                    $return = array(
-                                        
-                                        'error' => 0,
-                                        
-                                        'posts' => $data
-                                        
-                                        
-                                        
-                                    );
-                                    
-                                } else {
-                                    
-                                    $return = array(
-                                        
-                                        'error' => 0,
-                                        
-                                        'posts' => 'No result'
-                                        
-                                        
-                                        
-                                    );
-                                    
-                                }
-                                
-                                
-                                
-                            } //CUARTO  metodo de busqueda 
-                            
-                        } //TERCER metodo de busqueda 
-                        
-                    } // SEGUNDO  metodo de busqueda 
+                    }  
+                          
                     
                 } // PRIMER metodo de busqueda 
                 
