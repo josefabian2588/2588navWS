@@ -7,7 +7,7 @@ header('content-type: application/json; charset=utf-8');
 include('includes/config.php');
 include('includes/polyline.php');
 include('includes/correctorortografico.php');
-require_once 'stemm_es.php';
+//require_once 'stemm_es.php';
 
 
 function ordenarArrayDistancia($a, $b) {
@@ -3021,11 +3021,15 @@ ORDER BY distance";
                     // Match(label) AGAINST ('" . $search_term . "')    
                     //  *******************************************     
 
-            $array = obtenerNombreZona($search_term); 
+        $array = obtenerNombreZona($search_term); 
         $FraseFinal = trim($array['FraseFinal']);
         $FraseFinalCompleta = trim($array['FraseFinalCompleta']);
         $FraseInicial = trim($array['FraseInicial']);
   
+
+   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $numeroTrozos . "'";
+   mysql_query($sql_insertrecord);
+
 
 /*SI ES SOLO UNA PALABRA */
 if ($numeroTrozos === 1) {
@@ -3059,36 +3063,68 @@ else{
                                /****************************** */
 
 /* comprobar si la ultima palabra es un poblado  */
-  
-                  $trozos = explode(" ", $FraseInicial);             
+  /*
+                 $trozos = explode(" ", $FraseInicial);             
                  $FraseTemporalFinal=  end($trozos); 
                  $FraseTemporalInicial =str_ireplace($FraseTemporalFinal, "", $FraseInicial);
 
-
+*/
 
 /* verifica si la ultima palabra es un poblado  */
 
+/*
                $resultPalabrafinal=PalabraDistritosPoblados($FraseTemporalFinal);  //comprueba si la ultima plabra concuerda con algun poblado 
 
-           
+            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseTemporalFinal . "'";
+   mysql_query($sql_insertrecord);
+
+*/
 
    //      $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseTemporalInicial . "'";
    //    mysql_query($sql_insertrecord);
-              
+            
+$resultPalabrafinal = false;
+                    
+$resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba si la ultima plabra concuerda con algun poblado 
+
+/*
+    $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $resultPalabrafinal . "'";
+ mysql_query($sql_insertrecord);
+
+   $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinalCompleta . "'";
+ mysql_query($sql_insertrecord);
+*/
+
+
+  if ($resultPalabrafinal===false)
+                             $resultPalabrafinal = comprobarUltimaPalabra($FraseFinal);
+                        else
+                            $FraseFinal=$FraseFinalCompleta;
+
+
+
 /* la ultima palabra es un street */ 
     if ($resultPalabrafinal === true) 
     {
 
-  
+                            $FraseFinalCompletaTemp=EliminarPalabrasComunesExtras($FraseFinalCompleta);
 
-                            $FraseInicialRequerida=palabraRequeridaBoolean($FraseTemporalInicial);  //asigna el operador ´+´ para mejor resultado
-                           $FraseFinalRequerida=palabraRequeridaBoolean($FraseTemporalFinal);  //asigna el operador ´+´ para mejor resultado
+                            $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
+                           $FraseFinalRequerida=palabraRequeridaBoolean($FraseFinalCompletaTemp);  //asigna el operador ´+´ para mejor resultado
           /*              
        $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinalRequerida . "'";
         mysql_query($sql_insertrecord);
         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='holaXXXXX'";
         mysql_query($sql_insertrecord);  
 */
+
+                         $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicialRequerida . "'";
+ mysql_query($sql_insertrecord);
+
+  $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseFinalRequerida . "'";
+ mysql_query($sql_insertrecord);
+
+
 
 
                            $sql = "SELECT id,label,street,latitude,longitude,phone,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
@@ -3101,7 +3137,7 @@ else{
                                 WHERE  Match(label) AGAINST ('" . $FraseInicialRequerida . " ' IN BOOLEAN MODE)  and   Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE)";
                                 
 
-                            $sql = $sql . " HAVING (distance < '" . $radius . "') ORDER BY distance   limit 0,15";
+                            $sql = $sql . " HAVING (distance < '" . $radius . "') ORDER BY distance   limit 0,3";
 
 
     }//if ($resultPalabrafinal === true) 
