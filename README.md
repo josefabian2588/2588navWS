@@ -15,14 +15,14 @@ TODO
 
 6-Se pueden hacer búsquedas por zonas escribiendo al final el nombre del poblado (funciona en apropiadamente el 90% de las búsquedas) , por ejemplo:
           o    “INA de San Rafael de Alajuela” , busca algún INA en San Rafal  Alajuela .
-          o	“Taco Bell de Cartago” , busca los Taco Bell en Cartago .     /*MALO*/
+          o	“Taco Bell de Cartago” , busca los Taco Bell en Cartago .     /*FUNCIONA*/
           
 7-Se pueden hacer búsquedas por términos y además filtrando por zonas (funciona en apropiadamente el 85% de las búsquedas , se basa en el Street*) , por ejemplo:
           o	“Playas en Limón” , Playas es un término , por lo cual solo mostrara las playas de limón .
-          o	“Farmacias en Pavas” , Farmacias es un término , solo mostrara las Farmacias de Pavas. /*MALO*/
+          o	“Farmacias en Pavas” , Farmacias es un término , solo mostrara las Farmacias de Pavas. /*FUNCIONA*/
           
           
-8-Sí busca el nombre de un POI + la zona (EJ: "spoon de Heredia" , )        /*MALO*/   
+8-Sí busca el nombre de un POI + la zona (EJ: "spoon de Heredia" ,  "papesa en pavas", )        /*FUNCIONA*/   
 
 9-Sí busca el nombre de un POI + la zona , PERO SIN USAR DE O EN  (EJ: "spoon Heredia" , )     /*MALO*/
    ** No funciona con poblados que tengan el nombre compuesto por dos palabras (EJ: San Jose).        
