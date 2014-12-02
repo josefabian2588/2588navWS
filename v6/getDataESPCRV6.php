@@ -2596,7 +2596,7 @@ ORDER BY distance";
                 /*****************       
                 /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO 
                 /*****************/
-              $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
+              $sql_insertrecord = "insert into tb_borrar set searchterm='" . $TerminoEncontrado . "'";
             mysql_query($sql_insertrecord); 
              
                 if ($TerminoEncontrado === 1) {
@@ -2643,6 +2643,8 @@ ORDER BY distance";
  {
 
 
+$sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola222222";
+        mysql_query($sql_insertrecord);  
                     /*********************
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN POBLADO   
                     /***********************/
@@ -2711,6 +2713,9 @@ ORDER BY distance";
 
 
                         if ($num <= 0) {
+
+$sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola33333";
+        mysql_query($sql_insertrecord); 
 
                                 $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                         $resHexcode = mysql_query($sql);
@@ -2785,8 +2790,12 @@ ORDER BY distance";
          /****************** */
 
 
+$sql_insertrecord = "insert into tb_SearchRecords set searchterm='holaXXXXX'";
+        mysql_query($sql_insertrecord);  
                           /*  CORRECTOR ORTOGRAFICO */     
                           
+
+                          /*
                             $Sugerencias = array();
                             $palabras    = explode(" ", $testborrar);
                             $contador    = 1;
@@ -2804,9 +2813,14 @@ ORDER BY distance";
                 
                             $FraseInicialRequerida= palabraRequeridaBoolean($FraseCorregida);    
 
+*/
 
+                             $FraseCorregida=EliminarPalabrasComunesExtras($testborrar);
+                            $FraseCorregida=EliminarPalabrasComunes($FraseCorregida);
+                
+                            $FraseInicialRequerida= palabraRequeridaBoolean($FraseCorregida);  
 
-
+/*
 
 
                              $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
@@ -2820,6 +2834,9 @@ ORDER BY distance";
                                 
                                 $var             = $fila['Subhexcode'];
                                 $arraySubHexcode = explode(";", $var);
+
+
+                                */
                              /*  
 
                               $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
@@ -2849,12 +2866,18 @@ ORDER BY distance";
                                       
 */
 
+
+               $sql_insertrecord = "insert into tb_borrar set searchterm='" . $FraseCorregida . "'";
+              mysql_query($sql_insertrecord);                     
+            
+
+
                                                   $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE)  ";
-                                        
+                                       /* 
                                       $sql = $sql . " UNION"; 
                                         
                                         $sql =$sql . " SELECT *
@@ -2877,7 +2900,7 @@ ORDER BY distance";
                                                     }
                                                                                     
                                                 }
-                                              
+                                              */
                                     
                                                    $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,15";
 
@@ -2886,7 +2909,7 @@ ORDER BY distance";
 
 
 
-                  } //FIN WHILE                
+           //       } //FIN WHILE                
                           
 
 
@@ -2899,7 +2922,8 @@ ORDER BY distance";
 
             if ($num > 0) {
                         
-
+$sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola4444";
+        mysql_query($sql_insertrecord); 
 
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -2996,6 +3020,8 @@ ORDER BY distance";
                 else {
                     
                  
+                 $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola767772";
+        mysql_query($sql_insertrecord); 
                      /******************
                     /* 
                     /* EMPIEZA BUSQUEDA SIN SER TERMINO
