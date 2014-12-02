@@ -24,6 +24,6 @@ TODO
           
 8-Sí busca el nombre de un POI + la zona (EJ: "spoon de Heredia" ,  "papesa en pavas", )        /*FUNCIONA*/   
 
-9-Sí busca el nombre de un POI + la zona , PERO SIN USAR DE O EN  (EJ: "spoon Heredia" , )     /*MALO*/
-   ** No funciona con poblados que tengan el nombre compuesto por dos palabras (EJ: San Jose).        
+9-Sí busca el nombre de un POI + la zona , PERO SIN USAR DE O EN  (EJ: "spoon Heredia" , "jazz cafe escazu" )     /*FUNCIONA*/
+   .        
 
