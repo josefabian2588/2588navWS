@@ -3100,8 +3100,25 @@ else {
 
 /* comprobar si la ultima palabra es un poblado  */
 
+
+
+ //$sql_insertrecord = "insert into tb_borrar set searchterm='" . $search_term . "'";
+//mysql_query($sql_insertrecord);
+
+  $TemporalTermino = EliminarPalabrasComunesExtras(EliminarPalabrasComunes($search_term) );
+
+   $Temporaltrozos = explode(" ", trim($TemporalTermino));  
+
+   $Temporalultimapalabra = $Temporaltrozos [count($Temporaltrozos)-1];
+   $TemporalultimaDOSpalabras = $Temporaltrozos [count($Temporaltrozos)-2] ." ". $Temporalultimapalabra;
+
+
+
             
 $resultPalabrafinal = false;
+
+
+
                     
 $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba si la ultima plabra concuerda con algun poblado 
 
@@ -3109,9 +3126,40 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
 
 
   if ($resultPalabrafinal===false)
-                             $resultPalabrafinal = comprobarUltimaPalabra($FraseFinal);
-                        else
-                            $FraseFinal=$FraseFinalCompleta;
+  {
+                  $resultPalabrafinal = comprobarUltimaPalabra($FraseFinal);
+
+                  if ($resultPalabrafinal===false)
+                     {
+                        $resultPalabrafinal=PalabraDistritosPoblados($Temporalultimapalabra);
+
+                                    if ($resultPalabrafinal===false)
+                                    {
+                                        $resultPalabrafinal=PalabraDistritosPoblados($TemporalultimaDOSpalabras);
+
+                                        if ($resultPalabrafinal===true)
+                                        {  //quitar el poblado
+                                                $FraseInicial = str_replace($TemporalultimaDOSpalabras, "", $TemporalTermino );
+                                                $FraseFinalCompleta =$TemporalultimaDOSpalabras;
+                                        }
+                                    }
+                                    else
+                                    {   //quitar el poblado 
+                                        $FraseInicial = str_replace($Temporalultimapalabra, "", $TemporalTermino );
+                                        $FraseFinalCompleta =$Temporalultimapalabra;
+                                    }
+                     }
+
+  }
+   else
+       $FraseFinal=$FraseFinalCompleta;
+
+
+
+
+
+//$sql_insertrecord = "insert into tb_borrar set searchterm='" . $resultPalabrafinal . "'";
+//mysql_query($sql_insertrecord);
 
 
 
@@ -3119,11 +3167,18 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
     if ($resultPalabrafinal === true) 
     {
 
+
                             $FraseFinalCompletaTemp=EliminarPalabrasComunesExtras($FraseFinalCompleta);
 
                             $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
                            $FraseFinalRequerida=palabraRequeridaBoolean($FraseFinalCompletaTemp);  //asigna el operador ´+´ para mejor resultado
 
+
+                           $sql_insertrecord = "insert into tb_borrar set searchterm='" . $FraseFinalRequerida . "'";
+                            mysql_query($sql_insertrecord);
+
+                            $sql_insertrecord = "insert into tb_borrar set searchterm='" . $FraseInicialRequerida . "'";
+                            mysql_query($sql_insertrecord);
 
                            $sql = "SELECT *,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
