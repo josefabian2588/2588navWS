@@ -2598,8 +2598,7 @@ ORDER BY distance";
                 /*****************       
                 /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO 
                 /*****************/
-              $sql_insertrecord = "insert into tb_borrar set searchterm='" . $TerminoEncontrado . "'";
-            mysql_query($sql_insertrecord); 
+ 
              
                 if ($TerminoEncontrado === 1) {
 
@@ -2645,7 +2644,7 @@ ORDER BY distance";
  {
 
 
-$sql_insertrecord = "insert into tb_borrar set searchterm='hola222222";
+$sql_insertrecord = "insert into tb_borrar set searchterm='hola222222'";
         mysql_query($sql_insertrecord);  
                     /*********************
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN POBLADO   
