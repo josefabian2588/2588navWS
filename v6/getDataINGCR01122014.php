@@ -2591,8 +2591,8 @@ $radius = ((isset($_REQUEST['radius'])) ? $_REQUEST['radius'] : '');
                        /*****************       
                 /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO 
                 /*****************/
-              $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $FraseInicial . "'";
-            mysql_query($sql_insertrecord); 
+            
+            
              
                 if ($TerminoEncontrado === 1) {
 

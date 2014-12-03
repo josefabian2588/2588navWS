@@ -2178,8 +2178,8 @@ ORDER BY distance";
             
             //*** 09-4-14 insertar el registro de la busqueda 
             
-          $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
-          mysql_query($sql_insertrecord);
+            $sql_insertrecord = "insert into tb_SearchRecords set searchterm='" . $search_term . "'";
+            mysql_query($sql_insertrecord);
            
         //  }
             
@@ -2494,6 +2494,9 @@ ORDER BY distance";
                  /*****************/
                 
                     
+
+
+
             $ArregloTermino = ObtenerTerminosDirectorio(); /* CARGA EL ARREGLO CON LOS TERMINOS  */
              
             foreach ($ArregloTermino as $obj_key => $termino) {
@@ -2598,7 +2601,8 @@ ORDER BY distance";
                 /*****************       
                 /*  PROCESO PARA OBTENER LOS POIS DEL TERMINO 
                 /*****************/
- 
+
+             
                 if ($TerminoEncontrado === 1) {
 
         
@@ -2643,8 +2647,7 @@ ORDER BY distance";
  {
 
 
-$sql_insertrecord = "insert into tb_borrar set searchterm='hola222222";
-        mysql_query($sql_insertrecord);  
+
                     /*********************
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN POBLADO   
                     /***********************/
@@ -2714,8 +2717,7 @@ $sql_insertrecord = "insert into tb_borrar set searchterm='hola222222";
 
                         if ($num <= 0) {
 
-$sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola33333";
-        mysql_query($sql_insertrecord); 
+
 
                                 $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
                         $resHexcode = mysql_query($sql);
@@ -3005,8 +3007,7 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola33333";
 
             if ($num > 0) {
                         
-$sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola4444";
-        mysql_query($sql_insertrecord); 
+
 
                         while ($row = mysql_fetch_object($res)) {
                             
@@ -3104,6 +3105,7 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola4444";
                     
                  
 
+ 
                      /******************
                     /* 
                     /* EMPIEZA BUSQUEDA SIN SER TERMINO
@@ -3132,7 +3134,8 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola4444";
 /*SI ES SOLO UNA PALABRA */
 if ($numeroTrozos === 1) {
                 
-                    
+      
+
                     $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
 
                      
@@ -3207,28 +3210,37 @@ else {
                                /****************************** */
 
 /* comprobar si la ultima palabra es un poblado  */
+ 
 
 
 
  //$sql_insertrecord = "insert into tb_borrar set searchterm='" . $search_term . "'";
 //mysql_query($sql_insertrecord);
-
-  $TemporalTermino = EliminarPalabrasComunesExtras(EliminarPalabrasComunes($search_term) );
-
-   $Temporaltrozos = explode(" ", trim($TemporalTermino));  
-
-   $Temporalultimapalabra = $Temporaltrozos [count($Temporaltrozos)-1];
-   $TemporalultimaDOSpalabras = $Temporaltrozos [count($Temporaltrozos)-2] ." ". $Temporalultimapalabra;
+    $resultPalabrafinal = false;
+    $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba si la ultima plabra concuerda con algun poblado 
 
 
+if ($resultPalabrafinal===false)
+{
 
-            
-$resultPalabrafinal = false;
+    if(PalabraDistritosPoblados($search_term))
+    {
+        $resultPalabrafinal =true;
+    }
+    else
+    {
+            $TemporalTermino = EliminarPalabrasComunesExtras(EliminarPalabrasComunes($search_term) );
 
+             $Temporaltrozos = explode(" ", trim($TemporalTermino));  
 
+            $Temporalultimapalabra = $Temporaltrozos [count($Temporaltrozos)-1];
+            $TemporalultimaDOSpalabras = $Temporaltrozos [count($Temporaltrozos)-2] ." ". $Temporalultimapalabra;
+
+    }
+    
+}
 
                     
-$resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba si la ultima plabra concuerda con algun poblado 
 
 
 
@@ -3266,6 +3278,8 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
 
 
 
+
+
 //$sql_insertrecord = "insert into tb_borrar set searchterm='" . $resultPalabrafinal . "'";
 //mysql_query($sql_insertrecord);
 
@@ -3276,13 +3290,14 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
     {
 
 
+      
                             $FraseFinalCompletaTemp=EliminarPalabrasComunesExtras($FraseFinalCompleta);
 
                             $FraseInicialRequerida=palabraRequeridaBoolean($FraseInicial);  //asigna el operador ´+´ para mejor resultado
                            $FraseFinalRequerida=palabraRequeridaBoolean($FraseFinalCompletaTemp);  //asigna el operador ´+´ para mejor resultado
 
 
-                        
+                          
 
                            $sql = "SELECT *,Match(street) AGAINST ('" . $FraseFinalRequerida . "' IN BOOLEAN MODE) as Score,
                                 (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
@@ -3330,6 +3345,14 @@ $resultPalabrafinal=PalabraDistritosPoblados($FraseFinalCompleta);  //comprueba 
                             /*  LA ULTIMA PALABRA -NO- ES UN POBLADO   */
                             /****************************** */
                   
+
+
+
+
+
+
+
+
                              /*
                             /*  CORRECTOR ORTOGRAFICO */
                         /*        
