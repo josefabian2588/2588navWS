@@ -2477,8 +2477,8 @@ ORDER BY distance";
                 $TerminoEncontrado = 0;
                 $coincidencia      = 0;
                 trim($search_term); /* banco de costa rica de san pedro */
-                
-     
+                $TerminoEncontradoAuxiliar=false;    
+        
                 
                 
                 $trozos         = explode(" ", $search_term); //ya no tiene blackwords
@@ -2507,7 +2507,11 @@ ORDER BY distance";
                         }
                         
                         if ($value === $search_termIntacto) //encuentra una similitud
-                            $coincidencia = 1;
+                            {
+                                $coincidencia = 1;
+                                $TerminoEncontradoAuxiliar=true; 
+
+                            }
                     }
                     
                     //if para evitar delay
@@ -2560,9 +2564,7 @@ ORDER BY distance";
 
 
               if ($TerminoEncontrado === 0) {
-               // $ArregloTermino = ObtenerTerminosDirectorio();
-                   // $trozos       = explode(" ", $search_term);
-                  //  $numero       = count($trozos);
+               
                     $palabraInicial = $trozos[0];
                 
                 foreach ($ArregloTermino as $obj_key => $termino) {
@@ -2643,7 +2645,7 @@ ORDER BY distance";
  {
 
 
-$sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola222222";
+$sql_insertrecord = "insert into tb_borrar set searchterm='hola222222";
         mysql_query($sql_insertrecord);  
                     /*********************
                     /*  INGRESA SI LA ULTIMA PALABRA CORRESPONDE A ALGUN POBLADO   
@@ -2785,13 +2787,11 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola33333";
 
          /****************************
          /*
-         /*  INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN POBLADO   */
+         /*  INGRESA SI LA ULTIMA PALABRA *NO* CORRESPONDE A ALGUN POBLADO   O SI SOLO ES UNA PALABRA*/
          /*
          /****************** */
 
 
-$sql_insertrecord = "insert into tb_SearchRecords set searchterm='holaXXXXX'";
-        mysql_query($sql_insertrecord);  
                           /*  CORRECTOR ORTOGRAFICO */     
                           
 
@@ -2815,69 +2815,41 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='holaXXXXX'";
 
 */
 
-                             $FraseCorregida=EliminarPalabrasComunesExtras($testborrar);
+
+
+                //              $sql_insertrecord = "insert into tb_borrar set searchterm='" . $TerminoEncontradoAuxiliar . "'";
+              //          mysql_query($sql_insertrecord);   
+
+
+                                        
+
+                            $FraseCorregida=EliminarPalabrasComunesExtras($testborrar);
                             $FraseCorregida=EliminarPalabrasComunes($FraseCorregida);
                 
                             $FraseInicialRequerida= palabraRequeridaBoolean($FraseCorregida);  
 
-/*
 
 
-                             $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
-                             $resHexcode = mysql_query($sql);
-                             $sql ="";
 
-                             // obtener el subhexcode                
-                            while ($fila = mysql_fetch_assoc($resHexcode)) {
+                            if ($TerminoEncontradoAuxiliar===true)
+                            {
+
+                                      $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
+                                      $resHexcode = mysql_query($sql);
+                                                    
+                                                
+                                        while ($fila = mysql_fetch_assoc($resHexcode)) 
+                                        {
                                 
-                                
-                                
-                                $var             = $fila['Subhexcode'];
-                                $arraySubHexcode = explode(";", $var);
+                                         $var             = $fila['Subhexcode'];
+                                         $arraySubHexcode = explode(";", $var);
 
-
-                                */
-                             /*  
-
-                              $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
-                                (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
-                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
-                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
-                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
-                            FROM navigar_fetch_xmldata 
-                             where  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE )";
-                              
-
-                            $sql = $sql . " HAVING (distance < '" . $radius . "')  ORDER BY distance   limit 0,20";
-               
-
-
-                                     /******************
-                                      *  METODO EN CASO DE QUE NINGUN TENGA CONCORDANCIA DIRECTA 
-                                     *******************/
-/*
-
-                     $res = mysql_query($sql);
-                     $num = mysql_num_rows($res);
-
-
-
-                                 if ($num <= 0) {
-                                      
-*/
-
-
-               $sql_insertrecord = "insert into tb_borrar set searchterm='" . $FraseCorregida . "'";
-              mysql_query($sql_insertrecord);                     
-            
-
-
-                                                  $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                           $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
                                             ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
                                             * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
                                             * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
                                             FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE)  ";
-                                       /* 
+                                       
                                       $sql = $sql . " UNION"; 
                                         
                                         $sql =$sql . " SELECT *
@@ -2900,16 +2872,129 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='holaXXXXX'";
                                                     }
                                                                                     
                                                 }
-                                              */
+                                              
+                                    
+                                                   $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,15";           
+
+
+                                    } //FIN WHILE                  
+
+                            } // if ($TerminoEncontradoAuxiliar===true)
+
+                            else //if ($TerminoEncontradoAuxiliar===FALSE)
+                            {
+
+
+                                 $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
+                                    (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
+                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
+                                    FROM navigar_fetch_xmldata 
+                                     where  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE )";
+                              
+
+                                 $sql = $sql . " HAVING (distance < '" . $radius . "')  ORDER BY distance   limit 0,15";
+               
+
+
+                            }
+
+/*
+                             $sql = "SELECT Subhexcode FROM tb_search_term  where id_search_term = " . $var_id . "";
+                             $resHexcode = mysql_query($sql);
+                             $sql ="";
+*/
+                             /*
+                             // obtener el subhexcode                
+                            while ($fila = mysql_fetch_assoc($resHexcode)) {
+                                
+                                
+                                
+                                $var             = $fila['Subhexcode'];
+                                $arraySubHexcode = explode(";", $var);
+
+
+                          */     
+                             
+/*
+                              $sql = "SELECT id,label,street,latitude,longitude,phone,Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE) as Score,
+                                (select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
+                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
+                            FROM navigar_fetch_xmldata 
+                             where  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE )";
+                              
+
+                            $sql = $sql . " HAVING (distance < '" . $radius . "') and (Score >=1) ORDER BY distance   limit 0,15";
+               
+
+*/
+                                     /******************
+                                      *  METODO EN CASO DE QUE NINGUN TENGA CONCORDANCIA DIRECTA 
+                                     *******************/
+
+/*
+                     $res = mysql_query($sql);
+                     $num = mysql_num_rows($res);
+
+
+
+                                 if ($num <= 0) {
+                                      
+*/
+
+/*
+               $sql_insertrecord = "insert into tb_borrar set searchterm='" . $FraseCorregida . "'";
+              mysql_query($sql_insertrecord);                     
+            
+*/
+
+/*
+                   $sql_insertrecord = "insert into tb_borrar set searchterm='" . $FraseInicialRequerida . "'";
+              mysql_query($sql_insertrecord);  
+
+                                                  $sql = "SELECT *,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                            ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) )
+                                            * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                            * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance                           
+                                            FROM navigar_fetch_xmldata  where  Match(label) AGAINST ('" . $FraseInicialRequerida . "' IN BOOLEAN MODE)  ";
+                                       
+                                      $sql = $sql . " UNION"; 
+                                        
+                                        $sql =$sql . " SELECT *
+                                                    ,(select IFNULL((sum(t3.rate)/count(t3.id)),0)  from navigar_reviews as t3 where t3.poi_id=navigar_fetch_xmldata.id )as rating,
+                                                    ( 6371000 * acos( cos( radians('" . $latitude . "') ) * cos( radians( navigar_fetch_xmldata.latitude ) ) 
+                                                    * cos( radians(navigar_fetch_xmldata.longitude) - radians('" . $longitude . "')) + sin(radians('" . $latitude . "')) 
+                                                    * sin( radians(navigar_fetch_xmldata.latitude)))) AS distance               
+                                                    FROM navigar_fetch_xmldata  where description = ";
+
+
+                                                foreach ($arraySubHexcode as $values) {
+                                                    
+                                                    if ($arraySubHexcode[0] == $values) {
+                                                        
+                                                        $sql = $sql . "'" . $values . "'";
+                                                        
+                                                    } else {
+                                                        $sql = $sql . " or description = '" . $values . "'   ";
+                                                        
+                                                    }
+                                                                                    
+                                                }
+                                              
                                     
                                                    $sql = $sql . " HAVING distance < '" . $radius . "'  ORDER BY distance limit 0,15";
 
-                         //                } //FIN if ($num <= 0) {
+
+*/
+                                //      } //FIN if ($num <= 0) {
 
 
 
 
-           //       } //FIN WHILE                
+          //      } //FIN WHILE                
                           
 
 
@@ -2984,7 +3069,7 @@ $sql_insertrecord = "insert into tb_SearchRecords set searchterm='hola4444";
                         }
                         
                          /* ORDENAR ARRAY  POR DISTANCIA*/
-                        usort($data, 'ordenarArrayDistancia');
+                 //       usort($data, 'ordenarArrayDistancia');
 
 
                         $return = array(
